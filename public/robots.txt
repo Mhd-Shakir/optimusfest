@@ -10,7 +10,7 @@ Disallow: /api/
 Disallow: /poster-helper/
 
 # Sitemap location
-Sitemap: https://yourdomain.com/sitemap.xml
+Sitemap: https://optimusfest.in/sitemap.xml
 
 # Crawl delay (optional - adjust as needed)
 Crawl-delay: 1

@@ -8,6 +8,7 @@ import { NewsSection } from "@/components/news-section"
 import { TestimonialsSection } from "@/components/testimonials-section"
 import { GallerySection } from "@/components/gallery-section"
 import { ContactSection } from "@/components/contact-section"
+import { FAQSection } from "@/components/faq-section"
 import { Footer } from "@/components/footer"
 
 export default function Home() {
@@ -54,6 +55,9 @@ export default function Home() {
         <div className="py-12 sm:py-16 md:py-20 lg:py-28">
           <TestimonialsSection />
         </div>
+
+        {/* FAQ Section */}
+        <FAQSection />
 
         {/* About Section for SEO/AEO */}
         <div className="py-12 bg-background/50 border-t border-border">

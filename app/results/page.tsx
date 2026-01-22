@@ -2,16 +2,31 @@ import type { Metadata } from "next"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { GeminiResultsInterface } from "@/components/gemini-results-interface"
+import { siteConfig, breadcrumbSchema } from "@/lib/seo-config"
 import { Sparkles, Trophy } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Results | Optimus Arts Fest",
-  description: "Search and explore competition results using AI-powered natural language search.",
+  title: "Live Results",
+  description: "Official results for Optimus Arts Fest 2026. Explore live point tables, category-wise winners, and competition updates from Ihyaul Aman Student Union.",
+  alternates: {
+    canonical: `${siteConfig.url}/results`,
+  },
 }
 
 export default function ResultsPage() {
+  const breadcrumbs = breadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Results", url: "/results" },
+  ]);
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-blue-50 via-purple-50 to-pink-50 dark:from-gray-950 dark:via-purple-950/20 dark:to-pink-950/20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbs),
+        }}
+      />
       <Header />
       <div className="pt-32 pb-24">
         <div className="container mx-auto px-4">

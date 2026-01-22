@@ -72,9 +72,10 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           className="mb-6 sm:mb-8 md:mb-10"
         >
+          <h1 className="sr-only">Optimus Arts Fest 2026 - Ihyaul Aman Student Union</h1>
           <img
             src="/optimus26.png"
-            alt="Optimus 26"
+            alt="Optimus Arts Fest 2026 Logo - Ihyaul Aman Student Union"
             className="w-56 h-56 xs:w-64 xs:h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem] object-contain drop-shadow-2xl max-w-full mx-auto"
           />
         </motion.div>
