@@ -1,0 +1,16 @@
+# Robots.txt for Optimus Arts Fest
+# Allow all search engines to crawl the site
+
+User-agent: *
+Allow: /
+
+# Disallow admin pages from being indexed
+Disallow: /admin/
+Disallow: /api/
+Disallow: /poster-helper/
+
+# Sitemap location
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# Crawl delay (optional - adjust as needed)
+Crawl-delay: 1

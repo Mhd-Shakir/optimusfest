@@ -55,10 +55,19 @@ export default function Home() {
           <TestimonialsSection />
         </div>
 
-        {/* Contact Section with gradient background */}
-        <div className="py-12 sm:py-16 md:py-20 lg:py-28 relative">
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent" />
-          <ContactSection />
+        {/* About Section for SEO/AEO */}
+        <div className="py-12 bg-background/50 border-t border-border">
+          <div className="container mx-auto px-4 max-w-4xl text-center">
+            <h2 className="sr-only">About Optimus Arts Fest</h2>
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+              Welcome to the official <strong>Optimus Arts Fest 2026</strong> portal.
+              Organized by the <strong>Ihyaul Aman Student Union</strong>, Optimus is the premier
+              arts and cultural festival of <strong>Darul Aman Integrated Islamic Academy</strong> in
+              <strong>Edavannappara</strong>. Stay tuned for real-time updates on stage events,
+              off-stage competitions, live results, and the final points table.
+              Experience the creative spirit of Optimus Fest.
+            </p>
+          </div>
         </div>
       </div>
 

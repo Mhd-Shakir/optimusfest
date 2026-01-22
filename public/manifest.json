@@ -1,0 +1,32 @@
+{
+    "name": "Optimus Arts Fest - Where Creativity Meets Excellence",
+    "short_name": "Optimus Fest",
+    "description": "Experience the pinnacle of artistic expression at Optimus Arts Fest. Join us for an extraordinary celebration of music, dance, drama, and visual arts.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0a0a0a",
+    "theme_color": "#0891b2",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/icon-light-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/apple-icon.png",
+            "sizes": "180x180",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "arts",
+        "entertainment",
+        "events",
+        "culture"
+    ],
+    "lang": "en-US",
+    "dir": "ltr"
+}
