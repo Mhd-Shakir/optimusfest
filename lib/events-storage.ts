@@ -56,3 +56,33 @@ export async function removeEventImage(eventId: string, imageUrl: string): Promi
     }
 }
 
+
+export interface CreateEventInput {
+    title: string
+    category: string
+    date: string
+    time: string
+    venue: string
+    description: string
+}
+
+export async function createEvent(data: CreateEventInput): Promise<EventData> {
+    try {
+        await dbConnect()
+        const newEvent = await Event.create({ ...data, images: [] })
+        return mapDocumentToEvent(newEvent)
+    } catch (error) {
+        console.error("Error creating event in DB:", error)
+        throw error
+    }
+}
+
+export async function deleteEvent(id: string): Promise<void> {
+    try {
+        await dbConnect()
+        await Event.findByIdAndDelete(id)
+    } catch (error) {
+        console.error("Error deleting event from DB:", error)
+        throw error
+    }
+}
