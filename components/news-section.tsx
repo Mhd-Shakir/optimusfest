@@ -2,8 +2,8 @@
 
 import { useRef, useEffect, useState } from "react"
 import { motion, useInView } from "framer-motion"
-import Image from "next/image"
 import { Calendar, User, Tag, ArrowRight, X } from "lucide-react"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 
@@ -70,7 +70,7 @@ export function NewsSection() {
               Latest Updates
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-sans font-bold mb-4">
-              <span className="gradient-text">Festival News</span>
+              <span className="gradient-text">Optimus News</span>
             </h2>
             <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto">
               Stay updated with the latest announcements and happenings at Optimus Arts Festival
@@ -103,7 +103,7 @@ export function NewsSection() {
                     {/* Image */}
                     <div className="relative h-40 md:h-48 overflow-hidden bg-gradient-to-br from-accent/5 to-primary/5">
                       {article.image ? (
-                        <Image
+                        <ImageWithFallback
                           src={article.image}
                           alt={article.title}
                           fill
@@ -187,7 +187,7 @@ export function NewsSection() {
             {/* Image */}
             {selectedArticle.image && (
               <div className="relative h-64 md:h-80 overflow-hidden rounded-t-3xl">
-                <Image
+                <ImageWithFallback
                   src={selectedArticle.image}
                   alt={selectedArticle.title}
                   fill

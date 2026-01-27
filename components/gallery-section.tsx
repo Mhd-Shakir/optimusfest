@@ -2,9 +2,9 @@
 
 import { useRef, useEffect, useState } from "react"
 import { motion, useInView, AnimatePresence } from "framer-motion"
-import Image from "next/image"
 import { X, ChevronLeft, ChevronRight, ImageIcon } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 
 interface GalleryImage {
   _id: string
@@ -108,7 +108,7 @@ export function GallerySection() {
                     {/* Background Stack Layer 2 (Furthest) - Always visible */}
                     {hasEnoughImages ? (
                       <div className="absolute inset-x-6 -top-8 bottom-6 z-0 transform scale-90 group-hover:-translate-y-3 transition-transform duration-500 overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-sm">
-                        <Image
+                        <ImageWithFallback
                           src={images[(index + 9) % images.length].image}
                           alt=""
                           fill
@@ -122,7 +122,7 @@ export function GallerySection() {
                     {/* Background Stack Layer 1 (Middle) - Always visible */}
                     {hasEnoughImages ? (
                       <div className="absolute inset-x-3 -top-4 bottom-3 z-10 transform scale-95 group-hover:-translate-y-2 transition-transform duration-500 overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-md">
-                        <Image
+                        <ImageWithFallback
                           src={images[(index + 8) % images.length].image}
                           alt=""
                           fill
@@ -141,7 +141,7 @@ export function GallerySection() {
                       className="relative z-20 aspect-square overflow-hidden rounded-2xl shadow-xl border border-white/10 bg-background"
                     >
                       <div className="glass h-full w-full transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/20">
-                        <Image
+                        <ImageWithFallback
                           src={img.image}
                           alt={`Gallery image ${index + 1}`}
                           fill
@@ -192,7 +192,7 @@ export function GallerySection() {
               className="relative w-full max-w-6xl h-[85vh] mx-4"
               onClick={(e) => e.stopPropagation()}
             >
-              <Image
+              <ImageWithFallback
                 src={images[selectedImage].image}
                 alt={`Gallery image ${selectedImage + 1}`}
                 fill

@@ -2,10 +2,10 @@
 
 import { useRef, useEffect, useState } from "react"
 import { motion, useInView } from "framer-motion"
-import Image from "next/image"
 import { Calendar, Clock, MapPin, Upload } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { EventGalleryModal } from "./event-gallery-modal"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 
 interface Event {
   _id: string
@@ -64,7 +64,7 @@ export function EventsSection() {
           className="text-center mb-12 md:mb-16"
         >
           <span className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs sm:text-sm font-semibold tracking-wider uppercase mb-4">
-            Festival Highlights
+            Optimus Highlights
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-sans font-bold mb-4">
             <span className="gradient-text">Events</span>
@@ -100,7 +100,7 @@ export function EventsSection() {
                   <div className="relative h-48 md:h-60 overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5">
                     {event.images && event.images.length > 0 ? (
                       <div className="relative h-full">
-                        <Image
+                        <ImageWithFallback
                           src={event.images[0]}
                           alt={event.title}
                           fill
