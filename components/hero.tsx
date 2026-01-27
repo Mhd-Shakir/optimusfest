@@ -70,7 +70,7 @@ export function Hero() {
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="mb-6 sm:mb-8 md:mb-10"
+          className="mb-2 sm:mb-8 md:mb-10"
         >
           <h1 className="sr-only">Optimus Arts Fest 2026 - Ihyaul Aman Student Union</h1>
           <img
@@ -84,8 +84,8 @@ export function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="mb-8 sm:mb-10"
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="mb-12 sm:mb-10"
         >
           <Link href="/results">
             <Button
@@ -96,35 +96,36 @@ export function Hero() {
             </Button>
           </Link>
         </motion.div>
-      </motion.div>
 
-      {/* Scroll Down Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2 }}
-        className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20"
-      >
+        {/* Scroll Down Indicator - Now in flow below the button */}
         <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-          className="flex flex-col items-center gap-2 cursor-pointer group"
-          onClick={() => {
-            document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
-          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className="z-20 mt-4"
         >
-          <span className="text-white text-[10px] xs:text-xs sm:text-sm uppercase tracking-widest drop-shadow-lg font-medium opacity-90 group-hover:opacity-100 transition-opacity">
-            Scroll Down
-          </span>
-          <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-white/70 rounded-full flex items-start justify-center p-1.5 sm:p-2 group-hover:border-white transition-colors">
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-              className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-white rounded-full"
-            />
-          </div>
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+            className="flex flex-col items-center gap-2 cursor-pointer group"
+            onClick={() => {
+              document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            <span className="text-white text-[10px] xs:text-xs sm:text-sm uppercase tracking-widest drop-shadow-lg font-medium opacity-90 group-hover:opacity-100 transition-opacity">
+              Scroll Down
+            </span>
+            <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-white/70 rounded-full flex items-start justify-center p-1.5 sm:p-2 group-hover:border-white transition-colors">
+              <motion.div
+                animate={{ y: [0, 10, 0] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-white rounded-full"
+              />
+            </div>
+          </motion.div>
         </motion.div>
       </motion.div>
+
     </section>
   )
 }
