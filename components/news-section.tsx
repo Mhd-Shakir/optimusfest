@@ -101,7 +101,7 @@ export function NewsSection() {
                 >
                   <div className="glass rounded-3xl overflow-hidden h-full hover:shadow-2xl hover:shadow-accent/20 transition-all duration-500 border border-transparent hover:border-accent/30 flex flex-col">
                     {/* Image */}
-                    <div className="relative h-48 md:h-56 overflow-hidden bg-gradient-to-br from-accent/5 to-primary/5">
+                    <div className="relative h-40 md:h-48 overflow-hidden bg-gradient-to-br from-accent/5 to-primary/5">
                       {article.image ? (
                         <Image
                           src={article.image}
@@ -126,7 +126,7 @@ export function NewsSection() {
                     </div>
 
                     {/* Content */}
-                    <div className="p-6 md:p-8 flex-1 flex flex-col">
+                    <div className="p-5 md:p-6 flex-1 flex flex-col">
                       {/* Meta Info */}
                       <div className="flex items-center gap-4 mb-4 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1.5">

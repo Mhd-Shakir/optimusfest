@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { writeFile, mkdir } from "fs/promises"
-import { join } from "path"
-import { existsSync } from "fs"
+import cloudinary from "@/lib/cloudinary"
 
 export async function POST(request: NextRequest) {
     try {
@@ -16,22 +14,20 @@ export async function POST(request: NextRequest) {
         const bytes = await file.arrayBuffer()
         const buffer = Buffer.from(bytes)
 
-        // Create uploads directory if it doesn't exist
-        const uploadsDir = join(process.cwd(), "public", "uploads", "news")
-        if (!existsSync(uploadsDir)) {
-            await mkdir(uploadsDir, { recursive: true })
-        }
+        // Upload to Cloudinary
+        const result = await new Promise<any>((resolve, reject) => {
+            cloudinary.uploader.upload_stream(
+                {
+                    folder: "optimus_news",
+                },
+                (error: any, result: any) => {
+                    if (error) reject(error)
+                    else resolve(result)
+                }
+            ).end(buffer)
+        })
 
-        // Generate unique filename
-        const timestamp = Date.now()
-        const filename = `news-${timestamp}-${file.name.replace(/\s/g, "-")}`
-        const filepath = join(uploadsDir, filename)
-
-        // Save file
-        await writeFile(filepath, buffer)
-
-        // Return the public URL
-        const imageUrl = `/uploads/news/${filename}`
+        const imageUrl = result.secure_url
 
         return NextResponse.json({ imageUrl, success: true })
     } catch (error) {

@@ -97,7 +97,7 @@ export function EventsSection() {
                   onClick={() => handleEventClick(event)}
                 >
                   {/* Image Container with Gallery */}
-                  <div className="relative h-64 md:h-72 overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5">
+                  <div className="relative h-48 md:h-60 overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5">
                     {event.images && event.images.length > 0 ? (
                       <div className="relative h-full">
                         <Image
@@ -124,8 +124,8 @@ export function EventsSection() {
                   </div>
 
                   {/* Content */}
-                  <div className="p-6 md:p-8">
-                    <h3 className="text-2xl md:text-3xl font-bold mb-3 text-foreground group-hover:text-primary transition-colors">
+                  <div className="p-5 md:p-6">
+                    <h3 className="text-xl md:text-2xl font-bold mb-3 text-foreground group-hover:text-primary transition-colors">
                       {event.title}
                     </h3>
                     <p className="text-muted-foreground text-sm md:text-base mb-6 leading-relaxed">

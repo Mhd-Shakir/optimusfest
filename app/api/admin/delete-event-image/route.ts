@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { unlink } from "fs/promises"
-import { join } from "path"
 import { removeEventImage } from "@/lib/events-storage"
+import cloudinary from "@/lib/cloudinary"
 
 export async function DELETE(request: NextRequest) {
     try {
@@ -11,20 +10,28 @@ export async function DELETE(request: NextRequest) {
             return NextResponse.json({ error: "No image URL provided" }, { status: 400 })
         }
 
-        // Extract filename from URL
-        const filename = imageUrl.split("/").pop()
-        if (!filename) {
-            return NextResponse.json({ error: "Invalid image URL" }, { status: 400 })
-        }
+        // Try to delete from Cloudinary if it's a Cloudinary URL
+        if (imageUrl.includes("res.cloudinary.com")) {
+            try {
+                // Extract public ID from URL
+                // URL format: https://res.cloudinary.com/cloud_name/image/upload/v12345/folder/filename.jpg
+                // We want: folder/filename (without extension)
+                const parts = imageUrl.split("/")
+                const filenameWithExt = parts.pop()
+                const folder = parts.pop() // e.g., 'optimus_events' or 'v12345' (if versioned)
 
-        // Delete file from filesystem
-        const filepath = join(process.cwd(), "public", "uploads", "events", filename)
+                // If the folder is a version number (starts with 'v'), look back one more
+                const publicId = (folder && !folder.startsWith('v'))
+                    ? `${folder}/${filenameWithExt?.split('.')[0]}`
+                    : filenameWithExt?.split('.')[0]
 
-        try {
-            await unlink(filepath)
-        } catch (error) {
-            console.error("File deletion error:", error)
-            // Continue even if file doesn't exist
+                if (publicId) {
+                    await cloudinary.uploader.destroy(publicId)
+                }
+            } catch (error) {
+                console.error("Cloudinary deletion error:", error)
+                // Continue with DB deletion even if cloud deletion fails
+            }
         }
 
         // Update the events data file
