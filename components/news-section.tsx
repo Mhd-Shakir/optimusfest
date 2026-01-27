@@ -53,7 +53,7 @@ export function NewsSection() {
 
   return (
     <>
-      <section id="news" ref={ref} className="relative overflow-hidden py-20 md:py-32 bg-gradient-to-b from-background to-accent/5">
+      <section id="news" ref={ref} className="relative overflow-hidden py-16 md:py-24 bg-gradient-to-b from-background to-accent/5">
         {/* Background decorations */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-accent/10 to-transparent rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-primary/10 to-transparent rounded-full blur-3xl" />

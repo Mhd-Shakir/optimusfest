@@ -20,23 +20,23 @@ export default function Home() {
       {/* Main Content Wrapper with modern spacing */}
       <div className="relative">
         {/* About Section with modern padding */}
-        <div className="py-12 sm:py-16 md:py-20 lg:py-28">
+        <div>
           <About />
         </div>
 
         {/* Theme Section with accent background */}
-        <div className="py-12 sm:py-16 md:py-20 lg:py-28 relative">
+        <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
           <ThemeSection />
         </div>
 
         {/* Teams Section */}
-        <div className="py-12 sm:py-16 md:py-20 lg:py-28">
+        <div>
           <TeamsSection />
         </div>
 
         {/* Events Section with accent */}
-        <div className="py-12 sm:py-16 md:py-20 lg:py-28 relative">
+        <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent/5 to-transparent" />
           <EventsSection />
         </div>
@@ -45,14 +45,14 @@ export default function Home() {
         <NewsSection />
 
         {/* Gallery Section */}
-        <div className="py-12 sm:py-16 md:py-20 lg:py-28">
+        <div>
           <div className="container mx-auto px-4 sm:px-6 md:px-8">
             <GallerySection />
           </div>
         </div>
 
         {/* Testimonials Section */}
-        <div className="py-12 sm:py-16 md:py-20 lg:py-28">
+        <div>
           <TestimonialsSection />
         </div>
 

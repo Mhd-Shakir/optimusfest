@@ -9,7 +9,7 @@ export function ThemeSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
 
   return (
-    <section id="theme" ref={ref} className="relative py-24 md:py-32 overflow-hidden">
+    <section id="theme" ref={ref} className="relative py-16 md:py-24 overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-card/50 to-transparent" />
       <div className="absolute top-1/4 right-0 w-80 h-80 bg-primary/10 rounded-full blur-[100px]" />

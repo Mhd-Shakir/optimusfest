@@ -38,7 +38,7 @@ export function TeamsSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
 
   return (
-    <section id="teams" ref={ref} className="relative overflow-hidden">
+    <section id="teams" ref={ref} className="relative overflow-hidden py-16 md:py-24">
       {/* Background decorations */}
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-gradient-to-tl from-accent/10 to-transparent rounded-full blur-3xl" />

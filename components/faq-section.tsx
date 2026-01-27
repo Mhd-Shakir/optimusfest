@@ -13,7 +13,7 @@ export function FAQSection() {
     const schema = faqSchema(commonFAQs);
 
     return (
-        <section id="faq" className="py-20 bg-background relative overflow-hidden">
+        <section id="faq" className="py-16 md:py-24 bg-background relative overflow-hidden">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{

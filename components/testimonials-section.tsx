@@ -79,7 +79,7 @@ export function TestimonialsSection() {
   }, [])
 
   return (
-    <section id="testimonials" ref={ref} className="relative py-20 md:py-32 overflow-hidden bg-gradient-to-b from-background via-accent/5 to-background">
+    <section id="testimonials" ref={ref} className="relative py-16 md:py-24 overflow-hidden bg-gradient-to-b from-background via-accent/5 to-background">
       {/* Background decorations */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-accent/10 to-transparent rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-primary/10 to-transparent rounded-full blur-3xl" />

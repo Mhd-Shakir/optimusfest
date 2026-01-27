@@ -11,7 +11,7 @@ export function ContactSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
 
   return (
-    <section id="contact" ref={ref} className="relative py-24 md:py-32 overflow-hidden">
+    <section id="contact" ref={ref} className="relative py-16 md:py-24 overflow-hidden">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
 
       <div className="container mx-auto px-4 relative z-10">

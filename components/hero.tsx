@@ -76,7 +76,7 @@ export function Hero() {
           <img
             src="/optimus26.png"
             alt="Optimus Arts Fest 2026 Logo - Ihyaul Aman Student Union"
-            className="w-56 h-56 xs:w-64 xs:h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem] object-contain drop-shadow-2xl max-w-full mx-auto"
+            className="w-72 h-72 xs:w-80 xs:h-80 sm:w-80 sm:h-80 md:w-80 md:h-80 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem] object-contain drop-shadow-2xl max-w-full mx-auto"
           />
         </motion.div>
 
