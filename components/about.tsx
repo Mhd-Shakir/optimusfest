@@ -47,20 +47,21 @@ export function About() {
             className="flex flex-col gap-8 md:pt-20 lg:pt-24"
           >
             {/* Added top padding to align visually with the text content (accounting for the title) on larger screens */}
-            <div className="grid grid-cols-1 gap-6 sm:gap-8">
-              <div className="group relative overflow-hidden pl-4 border-l-2 border-primary/50 transition-all hover:pl-6">
-                <div className="text-4xl sm:text-5xl font-bold gradient-text mb-1">19</div>
-                <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Edition</div>
+            {/* Added top padding to align visually with the text content (accounting for the title) on larger screens */}
+            <div className="grid grid-cols-3 md:grid-cols-1 gap-4 sm:gap-8">
+              <div className="group relative overflow-hidden pl-3 md:pl-4 border-l-2 border-primary/50 transition-all md:hover:pl-6">
+                <div className="text-2xl sm:text-5xl font-bold gradient-text mb-1">19</div>
+                <div className="text-[10px] sm:text-sm text-muted-foreground font-medium uppercase tracking-wider">Edition</div>
               </div>
 
-              <div className="group relative overflow-hidden pl-4 border-l-2 border-accent/50 transition-all hover:pl-6">
-                <div className="text-4xl sm:text-5xl font-bold gradient-text mb-1">90+</div>
-                <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Contestants</div>
+              <div className="group relative overflow-hidden pl-3 md:pl-4 border-l-2 border-accent/50 transition-all md:hover:pl-6">
+                <div className="text-2xl sm:text-5xl font-bold gradient-text mb-1">90+</div>
+                <div className="text-[10px] sm:text-sm text-muted-foreground font-medium uppercase tracking-wider">Contestants</div>
               </div>
 
-              <div className="group relative overflow-hidden pl-4 border-l-2 border-primary/50 transition-all hover:pl-6">
-                <div className="text-4xl sm:text-5xl font-bold gradient-text mb-1">160+</div>
-                <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Competitions</div>
+              <div className="group relative overflow-hidden pl-3 md:pl-4 border-l-2 border-primary/50 transition-all md:hover:pl-6">
+                <div className="text-2xl sm:text-5xl font-bold gradient-text mb-1">160+</div>
+                <div className="text-[10px] sm:text-sm text-muted-foreground font-medium uppercase tracking-wider">Competitions</div>
               </div>
             </div>
           </motion.div>
