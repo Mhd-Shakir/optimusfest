@@ -47,21 +47,18 @@ export function About() {
             className="flex flex-col gap-8 md:pt-20 lg:pt-24"
           >
             {/* Added top padding to align visually with the text content (accounting for the title) on larger screens */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-1 gap-6 sm:gap-8">
-              <div className="glass p-6 rounded-2xl border-l-4 border-primary/50 relative overflow-hidden group hover:shadow-lg transition-all">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110" />
+            <div className="grid grid-cols-1 gap-6 sm:gap-8">
+              <div className="group relative overflow-hidden pl-4 border-l-2 border-primary/50 transition-all hover:pl-6">
                 <div className="text-4xl sm:text-5xl font-bold gradient-text mb-1">19</div>
                 <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Edition</div>
               </div>
 
-              <div className="glass p-6 rounded-2xl border-l-4 border-accent/50 relative overflow-hidden group hover:shadow-lg transition-all">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-accent/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110" />
+              <div className="group relative overflow-hidden pl-4 border-l-2 border-accent/50 transition-all hover:pl-6">
                 <div className="text-4xl sm:text-5xl font-bold gradient-text mb-1">90+</div>
                 <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Contestants</div>
               </div>
 
-              <div className="glass p-6 rounded-2xl border-l-4 border-primary/50 relative overflow-hidden group hover:shadow-lg transition-all">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110" />
+              <div className="group relative overflow-hidden pl-4 border-l-2 border-primary/50 transition-all hover:pl-6">
                 <div className="text-4xl sm:text-5xl font-bold gradient-text mb-1">160+</div>
                 <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Competitions</div>
               </div>
@@ -69,7 +66,7 @@ export function About() {
           </motion.div>
 
         </div>
-      </div>
-    </section>
+      </div >
+    </section >
   )
 }
