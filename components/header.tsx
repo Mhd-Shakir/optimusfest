@@ -1,5 +1,6 @@
 "use client"
 
+import { usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
@@ -8,48 +9,45 @@ import { Menu, X, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const mainNavItems = [
-  { name: "Home", href: "#home" },
-  { name: "About", href: "#about" },
-  { name: "Events", href: "#events" },
+  { name: "Home", href: "/" },
+  { name: "About", href: "/about" },
+  { name: "Events", href: "/events" },
   { name: "Results", href: "/results" },
 ]
 
 const moreItems = [
-  { name: "Theme", href: "#theme" },
-  { name: "Teams", href: "#teams" },
-  { name: "News", href: "#news" },
-  { name: "Gallery", href: "#gallery" },
-  { name: "Testimonials", href: "#testimonials" },
-  { name: "Contact", href: "#contact" },
+  { name: "Theme", href: "/theme" },
+  { name: "Teams", href: "/teams" },
+  { name: "News", href: "/news" },
+  { name: "Gallery", href: "/gallery" },
+  { name: "Testimonials", href: "/testimonials" },
+  { name: "Contact", href: "/contact" },
 ]
 
 export function Header() {
+  const pathname = usePathname()
   const [isScrolled, setIsScrolled] = useState(false)
-  const [activeSection, setActiveSection] = useState("home")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
-
-      const allItems = [...mainNavItems, ...moreItems]
-      const sections = allItems.map((item) => item.href.replace("#", "")).filter((id) => id !== "/results")
-      for (const section of sections.reverse()) {
-        const element = document.getElementById(section)
-        if (element) {
-          const rect = element.getBoundingClientRect()
-          if (rect.top <= 150) {
-            setActiveSection(section)
-            break
-          }
-        }
-      }
     }
 
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const isActive = (path: string) => {
+    if (path === "/" && pathname !== "/") return false
+    return pathname.startsWith(path)
+  }
+
+  const handleNavClick = () => {
+    setIsMobileMenuOpen(false)
+    setIsDropdownOpen(false)
+  }
 
   return (
     <motion.header
@@ -68,7 +66,7 @@ export function Header() {
         >
           <div className="flex items-center justify-between px-3 sm:px-4 md:px-5 py-2">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+            <Link href="/" className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
               <Image src="/images/image.png" alt="Optimus Arts Fest Logo" width={32} height={32} className="rounded-lg w-7 h-7 sm:w-8 sm:h-8" />
               <motion.div whileHover={{ scale: 1.05 }} className="text-sm sm:text-base md:text-lg font-sans font-bold tracking-tight">
                 <span className="text-foreground">OPTIMUS</span>
@@ -82,10 +80,10 @@ export function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={handleNavClick}
                   className={cn(
                     "px-3 py-1.5 text-xs font-medium transition-all duration-300 relative rounded-full",
-                    activeSection === item.href.replace("#", "") ||
-                      (item.href === "/results" && activeSection === "results")
+                    isActive(item.href)
                       ? "text-primary bg-primary/10"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                   )}
@@ -101,7 +99,7 @@ export function Header() {
                   onMouseEnter={() => setIsDropdownOpen(true)}
                   className={cn(
                     "px-3 py-1.5 text-xs font-medium transition-all duration-300 rounded-full flex items-center gap-0.5",
-                    isDropdownOpen
+                    isDropdownOpen || moreItems.some(item => isActive(item.href))
                       ? "text-primary bg-primary/10"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                   )}
@@ -129,10 +127,10 @@ export function Header() {
                           <Link
                             key={item.name}
                             href={item.href}
-                            onClick={() => setIsDropdownOpen(false)}
+                            onClick={handleNavClick}
                             className={cn(
                               "block px-4 py-2.5 text-sm font-medium transition-all duration-200",
-                              activeSection === item.href.replace("#", "")
+                              isActive(item.href)
                                 ? "text-primary bg-primary/10"
                                 : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                             )}
@@ -175,10 +173,10 @@ export function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={handleNavClick}
                   className={cn(
                     "py-2.5 px-4 text-sm font-medium transition-all duration-300 rounded-xl",
-                    activeSection === item.href.replace("#", "")
+                    isActive(item.href)
                       ? "text-primary bg-primary/10"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                   )}
@@ -198,10 +196,10 @@ export function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={handleNavClick}
                   className={cn(
                     "py-2.5 px-4 text-sm font-medium transition-all duration-300 rounded-xl",
-                    activeSection === item.href.replace("#", "")
+                    isActive(item.href)
                       ? "text-primary bg-primary/10"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                   )}

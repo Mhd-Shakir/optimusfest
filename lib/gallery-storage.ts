@@ -1,46 +1,47 @@
-import { readFile, writeFile } from "fs/promises"
-import { join } from "path"
-
-const GALLERY_FILE = join(process.cwd(), "lib", "gallery-data.json")
+import dbConnect from "@/lib/mongodb"
+import Gallery, { IGallery } from "@/lib/models/Gallery"
 
 export interface GalleryImage {
     _id: string
     image: string
 }
 
+function mapDocumentToGallery(doc: IGallery): GalleryImage {
+    return {
+        _id: doc._id.toString(),
+        image: doc.image,
+    }
+}
+
 export async function getGalleryData(): Promise<GalleryImage[]> {
     try {
-        const data = await readFile(GALLERY_FILE, "utf-8")
-        return JSON.parse(data)
+        await dbConnect()
+        const gallery = await Gallery.find({}).sort({ createdAt: -1 })
+        return gallery.map(mapDocumentToGallery)
     } catch (error) {
-        console.error("Error reading gallery data:", error)
+        console.error("Error fetching gallery from DB:", error)
         return []
     }
 }
 
 export async function addGalleryImage(imageUrl: string): Promise<GalleryImage> {
     try {
-        const gallery = await getGalleryData()
-        const newImage: GalleryImage = {
-            _id: Date.now().toString(),
-            image: imageUrl,
-        }
-        gallery.push(newImage)
-        await writeFile(GALLERY_FILE, JSON.stringify(gallery, null, 2))
-        return newImage
+        await dbConnect()
+        const newImage = await Gallery.create({ image: imageUrl })
+        return mapDocumentToGallery(newImage)
     } catch (error) {
-        console.error("Error adding gallery image:", error)
+        console.error("Error adding gallery image to DB:", error)
         throw error
     }
 }
 
 export async function deleteGalleryImage(id: string): Promise<void> {
     try {
-        const gallery = await getGalleryData()
-        const filteredGallery = gallery.filter((img) => img._id !== id)
-        await writeFile(GALLERY_FILE, JSON.stringify(filteredGallery, null, 2))
+        await dbConnect()
+        await Gallery.findByIdAndDelete(id)
     } catch (error) {
-        console.error("Error deleting gallery image:", error)
+        console.error("Error deleting gallery image from DB:", error)
         throw error
     }
 }
+

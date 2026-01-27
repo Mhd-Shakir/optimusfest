@@ -85,9 +85,9 @@ export function GallerySection() {
             </p>
           </motion.div>
 
-          {/* Gallery Grid */}
+          {/* Gallery Grid with Stack Effect */}
           {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mt-10">
               {[...Array(8)].map((_, i) => (
                 <Skeleton key={i} className="aspect-square rounded-2xl" />
               ))}
@@ -98,34 +98,63 @@ export function GallerySection() {
               <p className="text-muted-foreground text-lg">No images yet. Check back soon!</p>
             </div>
           ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
-            >
-              {images.map((img, index) => (
-                <motion.div
-                  key={img._id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
-                  className="group relative aspect-square cursor-pointer overflow-hidden rounded-2xl"
-                  onClick={() => setSelectedImage(index)}
-                >
-                  <div className="glass h-full hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 border border-transparent hover:border-primary/30">
-                    <Image
-                      src={img.image}
-                      alt={`Gallery image ${index + 1}`}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    {/* Gradient Overlay on Hover */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mt-10 px-4">
+              {images.slice(0, 8).map((img, index) => {
+                const hasEnoughImages = images.length > 8
+
+                return (
+                  <div key={img._id} className="relative group cursor-pointer mb-8" onClick={() => setSelectedImage(index)}>
+
+                    {/* Background Stack Layer 2 (Furthest) - Always visible */}
+                    {hasEnoughImages ? (
+                      <div className="absolute inset-x-6 -top-8 bottom-6 z-0 transform scale-90 group-hover:-translate-y-3 transition-transform duration-500 overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-sm">
+                        <Image
+                          src={images[(index + 9) % images.length].image}
+                          alt=""
+                          fill
+                          className="object-cover opacity-50 grayscale blur-[0.5px]"
+                        />
+                      </div>
+                    ) : (
+                      <div className="absolute inset-x-6 -top-8 bottom-6 bg-white/5 rounded-2xl border border-white/5 z-0 transform scale-90 group-hover:-translate-y-3 transition-transform duration-500" />
+                    )}
+
+                    {/* Background Stack Layer 1 (Middle) - Always visible */}
+                    {hasEnoughImages ? (
+                      <div className="absolute inset-x-3 -top-4 bottom-3 z-10 transform scale-95 group-hover:-translate-y-2 transition-transform duration-500 overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-md">
+                        <Image
+                          src={images[(index + 8) % images.length].image}
+                          alt=""
+                          fill
+                          className="object-cover opacity-70 grayscale-[0.3]"
+                        />
+                      </div>
+                    ) : (
+                      <div className="absolute inset-x-3 -top-4 bottom-3 bg-white/10 rounded-2xl border border-white/10 z-10 transform scale-95 group-hover:-translate-y-2 transition-transform duration-500" />
+                    )}
+
+                    {/* Main Image Card */}
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.4, delay: index * 0.05 }}
+                      className="relative z-20 aspect-square overflow-hidden rounded-2xl shadow-xl border border-white/10 bg-background"
+                    >
+                      <div className="glass h-full w-full transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/20">
+                        <Image
+                          src={img.image}
+                          alt={`Gallery image ${index + 1}`}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        {/* Gradient Overlay on Hover */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </div>
+                    </motion.div>
                   </div>
-                </motion.div>
-              ))}
-            </motion.div>
+                )
+              })}
+            </div>
           )}
         </div>
       </section>

@@ -56,6 +56,9 @@ export default function Home() {
           <TestimonialsSection />
         </div>
 
+        {/* Contact Section */}
+        <ContactSection />
+
         {/* FAQ Section */}
         <FAQSection />
 

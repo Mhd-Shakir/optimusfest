@@ -17,6 +17,7 @@ export default function AdminGalleryPage() {
     const [gallery, setGallery] = useState<GalleryImage[]>([])
     const [loading, setLoading] = useState(true)
     const [uploading, setUploading] = useState(false)
+    const [selectedIds, setSelectedIds] = useState<string[]>([])
     const { toast } = useToast()
 
     useEffect(() => {
@@ -101,6 +102,8 @@ export default function AdminGalleryPage() {
                 description: "Image deleted successfully",
             })
 
+            // Remove from selection if deleted
+            setSelectedIds(prev => prev.filter(selectedId => selectedId !== id))
             fetchGallery()
         } catch (error) {
             toast({
@@ -108,6 +111,53 @@ export default function AdminGalleryPage() {
                 description: "Failed to delete image",
                 variant: "destructive",
             })
+        }
+    }
+
+    const handleBulkDelete = async () => {
+        if (selectedIds.length === 0) return
+        if (!confirm(`Are you sure you want to delete ${selectedIds.length} images?`)) return
+
+        setLoading(true)
+
+        try {
+            const deletePromises = selectedIds.map(id =>
+                fetch(`/api/admin/gallery/${id}`, { method: "DELETE" })
+            )
+
+            await Promise.all(deletePromises)
+
+            toast({
+                title: "Success",
+                description: `${selectedIds.length} images deleted successfully`,
+            })
+
+            setSelectedIds([])
+            fetchGallery()
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to delete some images",
+                variant: "destructive",
+            })
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const toggleSelection = (id: string) => {
+        setSelectedIds(prev =>
+            prev.includes(id)
+                ? prev.filter(item => item !== id)
+                : [...prev, id]
+        )
+    }
+
+    const handleSelectAll = () => {
+        if (selectedIds.length === gallery.length) {
+            setSelectedIds([])
+        } else {
+            setSelectedIds(gallery.map(img => img._id))
         }
     }
 
@@ -136,10 +186,29 @@ export default function AdminGalleryPage() {
                                 Upload and manage festival gallery images
                             </p>
                         </div>
+                        {/* Bulk Actions */}
+                        <div className="flex gap-2">
+                            <Button
+                                variant="outline"
+                                onClick={handleSelectAll}
+                                disabled={gallery.length === 0}
+                            >
+                                {selectedIds.length === gallery.length ? "Deselect All" : "Select All"}
+                            </Button>
+                            {selectedIds.length > 0 && (
+                                <Button
+                                    variant="destructive"
+                                    onClick={handleBulkDelete}
+                                >
+                                    <Trash2 className="w-4 h-4 mr-2" />
+                                    Delete Selected ({selectedIds.length})
+                                </Button>
+                            )}
+                        </div>
                     </div>
 
                     {/* Upload Area */}
-                    <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-primary/30 rounded-3xl cursor-pointer hover:border-primary/60 transition-all duration-300 bg-gradient-to-br from-primary/5 to-accent/5 hover:from-primary/10 hover:to-accent/10 group">
+                    <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-primary/30 rounded-3xl cursor-pointer hover:border-primary/60 transition-all duration-300 bg-gradient-to-br from-primary/5 to-accent/5 hover:from-primary/10 hover:to-accent/10 group mb-8">
                         {uploading ? (
                             <div className="text-center">
                                 <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto mb-4" />
@@ -168,40 +237,55 @@ export default function AdminGalleryPage() {
 
                 {/* Gallery Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-                    {gallery.map((image, index) => (
-                        <motion.div
-                            key={image._id}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: index * 0.05 }}
-                        >
-                            <Card className="glass border-primary/20 overflow-hidden group">
-                                <CardContent className="p-0">
-                                    <div className="relative aspect-square">
-                                        <Image
-                                            src={image.image}
-                                            alt="Gallery image"
-                                            fill
-                                            className="object-cover transition-transform duration-500 group-hover:scale-110"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    {gallery.map((image, index) => {
+                        const isSelected = selectedIds.includes(image._id)
+                        return (
+                            <motion.div
+                                key={image._id}
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: index * 0.05 }}
+                                className={`relative group cursor-pointer ${isSelected ? 'ring-2 ring-primary rounded-xl' : ''}`}
+                                onClick={() => toggleSelection(image._id)}
+                            >
+                                <Card className="glass border-primary/20 overflow-hidden group h-full">
+                                    <CardContent className="p-0 h-full">
+                                        <div className="relative aspect-square">
+                                            <Image
+                                                src={image.image}
+                                                alt="Gallery image"
+                                                fill
+                                                className={`object-cover transition-transform duration-500 group-hover:scale-110 ${isSelected ? 'opacity-80' : ''}`}
+                                            />
+                                            <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-300 ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
 
-                                        {/* Delete Button */}
-                                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            <Button
-                                                size="icon"
-                                                variant="destructive"
-                                                className="h-8 w-8 shadow-lg"
-                                                onClick={() => handleDelete(image._id)}
-                                            >
-                                                <Trash2 size={14} />
-                                            </Button>
+                                            {/* Selection Checkbox */}
+                                            <div className="absolute top-2 left-2">
+                                                <div className={`w-5 h-5 rounded-md border border-white/50 flex items-center justify-center transition-all ${isSelected ? 'bg-primary border-primary' : 'bg-black/30'}`}>
+                                                    {isSelected && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                                                </div>
+                                            </div>
+
+                                            {/* Delete Button (Single) */}
+                                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <Button
+                                                    size="icon"
+                                                    variant="destructive"
+                                                    className="h-8 w-8 shadow-lg"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        handleDelete(image._id)
+                                                    }}
+                                                >
+                                                    <Trash2 size={14} />
+                                                </Button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </motion.div>
-                    ))}
+                                    </CardContent>
+                                </Card>
+                            </motion.div>
+                        )
+                    })}
 
                     {gallery.length === 0 && !uploading && (
                         <Card className="glass col-span-full">
@@ -215,9 +299,14 @@ export default function AdminGalleryPage() {
 
                 {/* Image Count */}
                 {gallery.length > 0 && (
-                    <div className="mt-8 text-center">
+                    <div className="mt-8 text-center pb-8">
                         <p className="text-muted-foreground">
                             Total Images: <span className="font-bold text-foreground">{gallery.length}</span>
+                            {selectedIds.length > 0 && (
+                                <span className="ml-2 text-primary">
+                                    ({selectedIds.length} selected)
+                                </span>
+                            )}
                         </p>
                     </div>
                 )}

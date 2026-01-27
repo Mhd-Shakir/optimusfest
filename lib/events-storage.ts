@@ -1,7 +1,5 @@
-import { readFile, writeFile } from "fs/promises"
-import { join } from "path"
-
-const EVENTS_FILE = join(process.cwd(), "lib", "events-data.json")
+import dbConnect from "@/lib/mongodb"
+import Event, { IEvent } from "@/lib/models/Event"
 
 export interface EventData {
     _id: string
@@ -14,38 +12,47 @@ export interface EventData {
     images: string[]
 }
 
+function mapDocumentToEvent(doc: IEvent): EventData {
+    return {
+        _id: doc._id.toString(),
+        title: doc.title,
+        category: doc.category,
+        date: doc.date,
+        time: doc.time,
+        venue: doc.venue,
+        description: doc.description,
+        images: doc.images,
+    }
+}
+
 export async function getEventsData(): Promise<EventData[]> {
     try {
-        const data = await readFile(EVENTS_FILE, "utf-8")
-        return JSON.parse(data)
+        await dbConnect()
+        const events = await Event.find({}).sort({ date: 1 })
+        return events.map(mapDocumentToEvent)
     } catch (error) {
-        console.error("Error reading events data:", error)
+        console.error("Error fetching events from DB:", error)
         return []
     }
 }
 
 export async function updateEventImages(eventId: string, imageUrl: string): Promise<void> {
     try {
-        const events = await getEventsData()
-        const updatedEvents = events.map((event) =>
-            event._id === eventId ? { ...event, images: [...event.images, imageUrl] } : event
-        )
-        await writeFile(EVENTS_FILE, JSON.stringify(updatedEvents, null, 2))
+        await dbConnect()
+        await Event.findByIdAndUpdate(eventId, { $push: { images: imageUrl } })
     } catch (error) {
-        console.error("Error updating event images:", error)
+        console.error("Error updating event images in DB:", error)
         throw error
     }
 }
 
 export async function removeEventImage(eventId: string, imageUrl: string): Promise<void> {
     try {
-        const events = await getEventsData()
-        const updatedEvents = events.map((event) =>
-            event._id === eventId ? { ...event, images: event.images.filter((img) => img !== imageUrl) } : event
-        )
-        await writeFile(EVENTS_FILE, JSON.stringify(updatedEvents, null, 2))
+        await dbConnect()
+        await Event.findByIdAndUpdate(eventId, { $pull: { images: imageUrl } })
     } catch (error) {
-        console.error("Error removing event image:", error)
+        console.error("Error removing event image in DB:", error)
         throw error
     }
 }
+
