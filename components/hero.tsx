@@ -65,6 +65,18 @@ export function Hero() {
         style={{ opacity }}
         className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 text-center flex-1 flex flex-col items-center justify-center"
       >
+        {/* Mobile Theme Text */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="sm:hidden mb-2"
+        >
+          <span className="text-primary text-[10px] xs:text-xs font-bold tracking-[0.3em] uppercase drop-shadow-sm brightness-110">
+            Buffer Less, Listen More
+          </span>
+        </motion.div>
+
         {/* Hero Image */}
         <motion.div
           initial={{ y: 100, opacity: 0 }}
