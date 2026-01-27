@@ -63,7 +63,7 @@ export function Hero() {
       {/* Hero Content Container */}
       <motion.div
         style={{ opacity }}
-        className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 text-center flex-1 flex flex-col items-center justify-center"
+        className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 text-center flex-1 flex flex-col items-center justify-start pt-12 sm:pt-20"
       >
         {/* Hero Image */}
         <motion.div
@@ -76,7 +76,7 @@ export function Hero() {
           <img
             src="/optimus26.png"
             alt="Optimus Arts Fest 2026 Logo - Ihyaul Aman Student Union"
-            className="w-[85vw] h-[85vw] xs:w-[80vw] xs:h-[80vw] sm:w-[28rem] sm:h-[28rem] md:w-[30rem] md:h-[30rem] lg:w-[34rem] lg:h-[34rem] xl:w-[40rem] xl:h-[40rem] object-contain drop-shadow-2xl max-w-full mx-auto"
+            className="w-[90vw] h-auto xs:w-80 sm:w-80 md:w-80 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem] object-contain drop-shadow-2xl max-w-full mx-auto"
           />
         </motion.div>
 
