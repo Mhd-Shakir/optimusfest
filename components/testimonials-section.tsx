@@ -6,8 +6,14 @@ import Image from "next/image"
 import { Quote, Star } from "lucide-react"
 import { getTestimonials, type Testimonial } from "@/lib/actions"
 import { Skeleton } from "@/components/ui/skeleton"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
-// Fallback data for demo
 const fallbackTestimonials: Testimonial[] = [
   {
     _id: "1",
@@ -103,94 +109,80 @@ export function TestimonialsSection() {
           </p>
         </motion.div>
 
-        {/* Testimonials Grid */}
+        {/* Testimonials Carousel */}
         {loading ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {[...Array(6)].map((_, i) => (
+            {[...Array(3)].map((_, i) => (
               <Skeleton key={i} className="h-[280px] rounded-3xl" />
             ))}
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial._id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="group"
-              >
-                <div className="glass rounded-3xl p-6 md:p-8 h-full hover:shadow-2xl hover:shadow-accent/20 transition-all duration-500 border border-transparent hover:border-accent/30 flex flex-col">
-                  {/* Quote Icon */}
-                  <div className="mb-4">
-                    <div className="inline-flex p-3 rounded-2xl bg-gradient-to-br from-accent/20 to-primary/20 group-hover:from-accent/30 group-hover:to-primary/30 transition-all duration-300">
-                      <Quote className="text-accent" size={24} />
-                    </div>
-                  </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4 md:-ml-6">
+              {testimonials.map((testimonial, index) => (
+                <CarouselItem key={testimonial._id} className="pl-4 md:pl-6 md:basis-1/2 lg:basis-1/3">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="h-full"
+                  >
+                    <div className="glass rounded-3xl p-6 md:p-8 h-full min-h-[320px] hover:shadow-2xl hover:shadow-accent/20 transition-all duration-500 border border-transparent hover:border-accent/30 flex flex-col mx-2 my-2">
+                      {/* Quote Icon */}
+                      <div className="mb-4">
+                        <div className="inline-flex p-3 rounded-2xl bg-gradient-to-br from-accent/20 to-primary/20 group-hover:from-accent/30 group-hover:to-primary/30 transition-all duration-300">
+                          <Quote className="text-accent" size={24} />
+                        </div>
+                      </div>
 
-                  {/* Stars */}
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={16} className="fill-accent text-accent" />
-                    ))}
-                  </div>
+                      {/* Stars */}
+                      <div className="flex gap-1 mb-4">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} size={16} className="fill-accent text-accent" />
+                        ))}
+                      </div>
 
-                  {/* Content */}
-                  <p className="text-foreground leading-relaxed mb-6 flex-1 text-sm md:text-base">
-                    "{testimonial.content}"
-                  </p>
-
-                  {/* Author */}
-                  <div className="flex items-center gap-4 pt-4 border-t border-border/50">
-                    <div className="relative w-14 h-14 rounded-full overflow-hidden ring-2 ring-accent/20 flex-shrink-0">
-                      <Image
-                        src={testimonial.image || "/placeholder.svg?height=100&width=100&query=person portrait"}
-                        alt={testimonial.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-foreground text-base md:text-lg truncate">
-                        {testimonial.name}
-                      </h4>
-                      <p className="text-xs md:text-sm text-muted-foreground truncate">
-                        {testimonial.role}
+                      {/* Content */}
+                      <p className="text-foreground leading-relaxed mb-6 flex-1 text-sm md:text-base">
+                        "{testimonial.content}"
                       </p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        )}
 
-        {/* Bottom Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
-        >
-          {[
-            { label: "Happy Participants", value: "500+" },
-            { label: "Success Stories", value: "200+" },
-            { label: "Years of Excellence", value: "10+" },
-            { label: "Satisfaction Rate", value: "98%" },
-          ].map((stat, index) => (
-            <div
-              key={index}
-              className="glass rounded-2xl p-6 text-center hover:shadow-lg hover:shadow-accent/10 transition-all duration-300"
-            >
-              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">
-                {stat.value}
-              </div>
-              <div className="text-xs md:text-sm text-muted-foreground">
-                {stat.label}
-              </div>
+                      {/* Author */}
+                      <div className="flex items-center gap-4 pt-4 border-t border-border/50">
+                        <div className="relative w-14 h-14 rounded-full overflow-hidden ring-2 ring-accent/20 flex-shrink-0">
+                          <Image
+                            src={testimonial.image || "/placeholder.svg?height=100&width=100&query=person portrait"}
+                            alt={testimonial.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold text-foreground text-base md:text-lg truncate">
+                            {testimonial.name}
+                          </h4>
+                          <p className="text-xs md:text-sm text-muted-foreground truncate">
+                            {testimonial.role}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="flex justify-center mt-8 gap-4">
+              <CarouselPrevious className="relative static translate-y-0" />
+              <CarouselNext className="relative static translate-y-0" />
             </div>
-          ))}
-        </motion.div>
+          </Carousel>
+        )}
       </div>
     </section>
   )

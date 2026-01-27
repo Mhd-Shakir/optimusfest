@@ -32,146 +32,120 @@ export async function generateEventPoster(
             return
         }
 
-        console.log("Canvas context created successfully")
-
         const img = new Image()
         img.crossOrigin = 'anonymous'
 
-        img.onload = () => {
-            console.log("Template image loaded! Size:", img.width, "x", img.height)
+        img.onload = async () => {
+            // Wait for fonts if necessary (optional, but good practice)
+            await document.fonts.ready
 
             // Set canvas size to match template
             canvas.width = img.width
             canvas.height = img.height
-
-            console.log("Canvas size set to:", canvas.width, "x", canvas.height)
 
             // Draw template image
             ctx.drawImage(img, 0, 0)
 
             const centerX = canvas.width / 2
 
-            // Set text properties
+            // Colors
+            const darkColor = '#1a1a1a'
+            const grayColor = '#555555'
+
+            // Set text properties common baseline
             ctx.textBaseline = 'middle'
 
-            // 1. RESULT NUMBER (centered, just below "RESULT" text)
-            ctx.fillStyle = '#1a1a1a' // Dark color for visibility
+            // 1. RESULT NUMBER (centered)
+            ctx.fillStyle = darkColor
             ctx.font = 'bold 100px Arial, sans-serif'
             ctx.textAlign = 'center'
             ctx.fillText(data.resultNumber, centerX, canvas.height * 0.18)
 
-            console.log("Result number drawn:", data.resultNumber)
-
-            // 2. EVENT NAME (left box area, dark text)
-            ctx.fillStyle = '#1a1a1a' // Dark color
+            // 2. EVENT NAME (left box area)
+            ctx.fillStyle = darkColor
             ctx.font = 'bold 36px Arial, sans-serif'
             ctx.textAlign = 'left'
 
-            const maxWidth = canvas.width * 0.35
-            const words = data.event.split(' ')
-            let line = ''
-            let y = canvas.height * 0.40
+            const leftBoxX = canvas.width * 0.12
+            const maxEventWidth = canvas.width * 0.35
+            let currentY = canvas.height * 0.40
 
-            for (let n = 0; n < words.length; n++) {
-                const testLine = line + words[n] + ' '
-                const metrics = ctx.measureText(testLine)
+            const eventLines = wrapText(ctx, data.event, maxEventWidth)
+            eventLines.forEach((line) => {
+                ctx.fillText(line, leftBoxX, currentY)
+                currentY += 45 // Line height
+            })
 
-                if (metrics.width > maxWidth && n > 0) {
-                    ctx.fillText(line, canvas.width * 0.12, y)
-                    line = words[n] + ' '
-                    y += 40
-                } else {
-                    line = testLine
-                }
-            }
-            ctx.fillText(line, canvas.width * 0.12, y)
-
-            console.log("Event name drawn:", data.event)
-
-            // 3. CATEGORY (small, just below event name)
-            ctx.fillStyle = '#555555' // Medium dark gray
+            // 3. CATEGORY (below event name)
+            ctx.fillStyle = grayColor
             ctx.font = '24px Arial, sans-serif'
             ctx.textAlign = 'left'
-            ctx.fillText(data.category, canvas.width * 0.12, y + 40)
+            ctx.fillText(data.category, leftBoxX, currentY + 10) // Small padding after event name
 
-            console.log("Category drawn:", data.category)
-
-            // 4. ALL WINNERS (right box - line by line)
-            ctx.fillStyle = '#1a1a1a' // Dark text
+            // 4. ALL WINNERS (right box)
+            ctx.fillStyle = darkColor
             ctx.textAlign = 'left'
 
-            const rightBoxStartX = canvas.width * 0.55
-            let boxY = canvas.height * 0.35
+            const rightBoxX = canvas.width * 0.55
+            let rightBoxY = canvas.height * 0.35
+            const lineHeight = 35
+            const positionGap = 45 // Gap between 1st/2nd/3rd blocks
 
-            // 1st Place Winners
-            if (data.winners.first.length > 0) {
+            // Helper to draw a position block
+            const drawPositionBlock = (title: string, names: string[]) => {
+                if (names.length === 0) return
+
                 ctx.font = 'bold 32px Arial, sans-serif'
-                ctx.fillText('1st POSITION', rightBoxStartX, boxY)
-                boxY += 40
+                ctx.fillText(title, rightBoxX, rightBoxY)
+                rightBoxY += 40
 
                 ctx.font = '28px Arial, sans-serif'
-                data.winners.first.forEach(name => {
-                    ctx.fillText(name, rightBoxStartX, boxY)
-                    boxY += 35
+                names.forEach(name => {
+                    ctx.fillText(name, rightBoxX, rightBoxY)
+                    rightBoxY += lineHeight
                 })
-                boxY += 15
-                console.log("1st place winners drawn:", data.winners.first)
+                rightBoxY += positionGap
             }
 
-            // 2nd Place Winners
-            if (data.winners.second.length > 0) {
-                ctx.font = 'bold 32px Arial, sans-serif'
-                ctx.fillText('2nd POSITION', rightBoxStartX, boxY)
-                boxY += 40
-
-                ctx.font = '28px Arial, sans-serif'
-                data.winners.second.forEach(name => {
-                    ctx.fillText(name, rightBoxStartX, boxY)
-                    boxY += 35
-                })
-                boxY += 15
-                console.log("2nd place winners drawn:", data.winners.second)
-            }
-
-            // 3rd Place Winners
-            if (data.winners.third.length > 0) {
-                ctx.font = 'bold 32px Arial, sans-serif'
-                ctx.fillText('3rd POSITION', rightBoxStartX, boxY)
-                boxY += 40
-
-                ctx.font = '28px Arial, sans-serif'
-                data.winners.third.forEach(name => {
-                    ctx.fillText(name, rightBoxStartX, boxY)
-                    boxY += 35
-                })
-                console.log("3rd place winners drawn:", data.winners.third)
-            }
-
-            console.log("All text drawn, converting to blob...")
+            drawPositionBlock('1st POSITION', data.winners.first)
+            drawPositionBlock('2nd POSITION', data.winners.second)
+            drawPositionBlock('3rd POSITION', data.winners.third)
 
             // Convert canvas to blob
             canvas.toBlob((blob) => {
                 if (blob) {
-                    console.log("Blob created successfully! Size:", blob.size, "bytes")
                     resolve(blob)
                 } else {
-                    console.error("Failed to create blob from canvas")
                     reject(new Error('Failed to create blob'))
                 }
             }, 'image/png')
         }
 
-        img.onerror = (error) => {
-            console.error("Failed to load template image:", error)
-            console.error("Image src:", img.src)
-            reject(new Error('Failed to load template image'))
-        }
-
-        // Load template
-        const templatePath = '/result.png'
-        console.log("Loading template from:", templatePath)
-        img.src = templatePath
+        img.onerror = () => reject(new Error('Failed to load template image'))
+        img.src = '/result.png'
     })
+}
+
+/**
+ * Helper to wrap text into lines
+ */
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+    const words = text.split(' ')
+    const lines = []
+    let currentLine = words[0]
+
+    for (let i = 1; i < words.length; i++) {
+        const word = words[i]
+        const width = ctx.measureText(currentLine + " " + word).width
+        if (width < maxWidth) {
+            currentLine += " " + word
+        } else {
+            lines.push(currentLine)
+            currentLine = word
+        }
+    }
+    lines.push(currentLine)
+    return lines
 }
 
 /**
