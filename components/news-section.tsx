@@ -101,7 +101,7 @@ export function NewsSection() {
                 >
                   <div className="glass rounded-3xl overflow-hidden h-full hover:shadow-2xl hover:shadow-accent/20 transition-all duration-500 border border-transparent hover:border-accent/30 flex flex-col">
                     {/* Image */}
-                    <div className="relative h-40 md:h-48 overflow-hidden bg-gradient-to-br from-accent/5 to-primary/5">
+                    <div className="relative h-32 md:h-40 overflow-hidden bg-gradient-to-br from-accent/5 to-primary/5">
                       {article.image ? (
                         <ImageWithFallback
                           src={article.image}
@@ -111,41 +111,41 @@ export function NewsSection() {
                         />
                       ) : (
                         <div className="h-full flex items-center justify-center bg-gradient-to-br from-accent/10 to-primary/10">
-                          <Tag size={48} className="text-muted-foreground opacity-30" />
+                          <Tag size={32} className="text-muted-foreground opacity-30" />
                         </div>
                       )}
                       {/* Gradient Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
                       {/* Category Badge */}
-                      <div className="absolute top-4 left-4">
-                        <span className="px-3 py-1.5 text-xs font-semibold bg-white/90 backdrop-blur-sm text-black rounded-full shadow-lg">
+                      <div className="absolute top-3 left-3">
+                        <span className="px-2.5 py-1 text-[10px] font-semibold bg-white/90 backdrop-blur-sm text-black rounded-full shadow-lg">
                           {article.category}
                         </span>
                       </div>
                     </div>
 
                     {/* Content */}
-                    <div className="p-5 md:p-6 flex-1 flex flex-col">
+                    <div className="p-4 md:p-5 flex-1 flex flex-col">
                       {/* Meta Info */}
-                      <div className="flex items-center gap-4 mb-4 text-xs text-muted-foreground">
-                        <div className="flex items-center gap-1.5">
-                          <Calendar size={14} className="text-accent" />
+                      <div className="flex items-center gap-3 mb-3 text-[10px] md:text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Calendar size={12} className="text-accent" />
                           <span>{formatDate(article.date)}</span>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                          <User size={14} className="text-accent" />
+                        <div className="flex items-center gap-1">
+                          <User size={12} className="text-accent" />
                           <span>{article.author}</span>
                         </div>
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-xl md:text-2xl font-bold mb-3 text-foreground group-hover:text-accent transition-colors line-clamp-2">
+                      <h3 className="text-lg md:text-xl font-bold mb-2 text-foreground group-hover:text-accent transition-colors line-clamp-2">
                         {article.title}
                       </h3>
 
                       {/* Excerpt */}
-                      <p className="text-muted-foreground text-sm md:text-base mb-6 line-clamp-3 flex-1">
+                      <p className="text-muted-foreground text-xs md:text-sm mb-4 line-clamp-3 flex-1 leading-relaxed">
                         {article.excerpt}
                       </p>
 

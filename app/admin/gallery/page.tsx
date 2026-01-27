@@ -56,7 +56,10 @@ export default function AdminGalleryPage() {
                     body: formData,
                 })
 
-                if (!response.ok) throw new Error("Upload failed")
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || "Upload failed");
+                }
 
                 const data = await response.json()
 
@@ -77,9 +80,10 @@ export default function AdminGalleryPage() {
 
             fetchGallery()
         } catch (error) {
+            console.error("Upload error detail:", error);
             toast({
                 title: "Error",
-                description: "Failed to upload images",
+                description: error instanceof Error ? error.message : "Failed to upload images",
                 variant: "destructive",
             })
         } finally {

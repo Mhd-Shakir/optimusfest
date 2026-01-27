@@ -288,7 +288,7 @@ export default function AdminNewsPage() {
                                         />
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 gap-4">
                                         <div>
                                             <Label htmlFor="author">Author *</Label>
                                             <Input
@@ -297,24 +297,6 @@ export default function AdminNewsPage() {
                                                 onChange={(e) => setFormData({ ...formData, author: e.target.value })}
                                                 required
                                             />
-                                        </div>
-
-                                        <div>
-                                            <Label htmlFor="category">Category *</Label>
-                                            <Select
-                                                value={formData.category}
-                                                onValueChange={(value) => setFormData({ ...formData, category: value })}
-                                            >
-                                                <SelectTrigger>
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="Announcement">Announcement</SelectItem>
-                                                    <SelectItem value="Update">Update</SelectItem>
-                                                    <SelectItem value="News">News</SelectItem>
-                                                    <SelectItem value="Featured">Featured</SelectItem>
-                                                </SelectContent>
-                                            </Select>
                                         </div>
                                     </div>
 

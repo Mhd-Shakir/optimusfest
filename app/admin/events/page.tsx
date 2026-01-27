@@ -38,7 +38,7 @@ export default function AdminEventsPage() {
     const [creating, setCreating] = useState(false)
     const [newEvent, setNewEvent] = useState({
         title: "",
-        category: "",
+        category: "Event",
         date: "",
         time: "",
         venue: "",
@@ -133,7 +133,10 @@ export default function AdminEventsPage() {
                 body: formData,
             })
 
-            if (!response.ok) throw new Error("Upload failed")
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Upload failed");
+            }
 
             const data = await response.json()
 
@@ -149,9 +152,10 @@ export default function AdminEventsPage() {
                 description: "Image uploaded successfully",
             })
         } catch (error) {
+            console.error("Upload error detail:", error);
             toast({
                 title: "Error",
-                description: "Failed to upload image",
+                description: error instanceof Error ? error.message : "Failed to upload image",
                 variant: "destructive",
             })
         } finally {
@@ -223,57 +227,55 @@ export default function AdminEventsPage() {
                                 Add New Event
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-[500px] bg-background/95 backdrop-blur-xl border-white/10">
-                            <DialogHeader>
-                                <DialogTitle>Create New Event</DialogTitle>
-                                <DialogDescription>
-                                    Fill in the details for the new event.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <form onSubmit={handleCreateEvent} className="space-y-4 mt-4">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="title">Event Title</Label>
-                                    <Input
-                                        id="title"
-                                        value={newEvent.title}
-                                        onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-                                        placeholder="e.g. Grand Opening Ceremony"
-                                        required
-                                    />
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
+                        <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-background via-accent/5 to-primary/5 border-white/10 overflow-hidden">
+                            {/* Background decoration */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-transparent to-primary/10 rounded-lg pointer-events-none" />
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-accent/20 to-transparent rounded-full blur-3xl pointer-events-none opacity-50" />
+                            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-primary/20 to-transparent rounded-full blur-3xl pointer-events-none opacity-50" />
+
+                            <div className="relative z-10">
+                                <DialogHeader>
+                                    <DialogTitle>Create New Event</DialogTitle>
+                                    <DialogDescription>
+                                        Fill in the details for the new event.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <form onSubmit={handleCreateEvent} className="space-y-4 mt-4">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="category">Category</Label>
+                                        <Label htmlFor="title">Event Title</Label>
                                         <Input
-                                            id="category"
-                                            value={newEvent.category}
-                                            onChange={(e) => setNewEvent({ ...newEvent, category: e.target.value })}
-                                            placeholder="e.g. Stage"
+                                            id="title"
+                                            value={newEvent.title}
+                                            onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                                            placeholder="e.g. Grand Opening Ceremony"
                                             required
+                                            className="bg-background/50 border-white/10"
                                         />
                                     </div>
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="date">Date</Label>
-                                        <Input
-                                            id="date"
-                                            type="text"
-                                            value={newEvent.date}
-                                            onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
-                                            placeholder="e.g. Jan 15, 2026"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="time">Time</Label>
-                                        <Input
-                                            id="time"
-                                            value={newEvent.time}
-                                            onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
-                                            placeholder="e.g. 10:00 AM"
-                                            required
-                                        />
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="date">Date</Label>
+                                            <Input
+                                                id="date"
+                                                type="text"
+                                                value={newEvent.date}
+                                                onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+                                                placeholder="e.g. Jan 15, 2026"
+                                                required
+                                                className="bg-background/50 border-white/10"
+                                            />
+                                        </div>
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="time">Time</Label>
+                                            <Input
+                                                id="time"
+                                                value={newEvent.time}
+                                                onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
+                                                placeholder="e.g. 10:00 AM"
+                                                required
+                                                className="bg-background/50 border-white/10"
+                                            />
+                                        </div>
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="venue">Venue</Label>
@@ -283,31 +285,33 @@ export default function AdminEventsPage() {
                                             onChange={(e) => setNewEvent({ ...newEvent, venue: e.target.value })}
                                             placeholder="e.g. Main Auditorium"
                                             required
+                                            className="bg-background/50 border-white/10"
                                         />
                                     </div>
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="description">Description</Label>
-                                    <Textarea
-                                        id="description"
-                                        value={newEvent.description}
-                                        onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-                                        placeholder="Brief description of the event..."
-                                        rows={3}
-                                        required
-                                    />
-                                </div>
-                                <Button type="submit" className="w-full" disabled={creating}>
-                                    {creating ? (
-                                        <>
-                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            Creating...
-                                        </>
-                                    ) : (
-                                        "Create Event"
-                                    )}
-                                </Button>
-                            </form>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="description">Description</Label>
+                                        <Textarea
+                                            id="description"
+                                            value={newEvent.description}
+                                            onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+                                            placeholder="Brief description of the event..."
+                                            rows={3}
+                                            required
+                                            className="bg-background/50 border-white/10"
+                                        />
+                                    </div>
+                                    <Button type="submit" className="w-full" disabled={creating}>
+                                        {creating ? (
+                                            <>
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                Creating...
+                                            </>
+                                        ) : (
+                                            "Create Event"
+                                        )}
+                                    </Button>
+                                </form>
+                            </div>
                         </DialogContent>
                     </Dialog>
                 </motion.div>

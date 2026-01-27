@@ -97,7 +97,7 @@ export function EventsSection() {
                   onClick={() => handleEventClick(event)}
                 >
                   {/* Image Container with Gallery */}
-                  <div className="relative h-48 md:h-60 overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5">
+                  <div className="relative h-36 md:h-48 overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5">
                     {event.images && event.images.length > 0 ? (
                       <div className="relative h-full">
                         <ImageWithFallback
@@ -108,15 +108,15 @@ export function EventsSection() {
                         />
                         {/* Image count badge */}
                         {event.images.length > 1 && (
-                          <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-sm text-white text-xs font-semibold">
+                          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-sm text-white text-[10px] font-semibold">
                             +{event.images.length - 1} photos
                           </div>
                         )}
                       </div>
                     ) : (
                       <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
-                        <Upload size={40} className="mb-2 opacity-50" />
-                        <p className="text-sm">Photos coming soon</p>
+                        <Upload size={32} className="mb-1 opacity-50" />
+                        <p className="text-xs">Photos coming soon</p>
                       </div>
                     )}
                     {/* Gradient Overlay */}
@@ -124,26 +124,26 @@ export function EventsSection() {
                   </div>
 
                   {/* Content */}
-                  <div className="p-5 md:p-6">
-                    <h3 className="text-xl md:text-2xl font-bold mb-3 text-foreground group-hover:text-primary transition-colors">
+                  <div className="p-4 md:p-5">
+                    <h3 className="text-lg md:text-xl font-bold mb-2 text-foreground group-hover:text-primary transition-colors">
                       {event.title}
                     </h3>
-                    <p className="text-muted-foreground text-sm md:text-base mb-6 leading-relaxed">
+                    <p className="text-muted-foreground text-xs md:text-sm mb-4 leading-relaxed line-clamp-2">
                       {event.description}
                     </p>
 
                     {/* Event Details */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 text-sm md:text-base text-muted-foreground">
-                        <Calendar size={18} className="text-primary flex-shrink-0" />
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
+                        <Calendar size={14} className="text-primary flex-shrink-0" />
                         <span>{event.date}</span>
                       </div>
-                      <div className="flex items-center gap-3 text-sm md:text-base text-muted-foreground">
-                        <Clock size={18} className="text-primary flex-shrink-0" />
+                      <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
+                        <Clock size={14} className="text-primary flex-shrink-0" />
                         <span>{event.time}</span>
                       </div>
-                      <div className="flex items-center gap-3 text-sm md:text-base text-muted-foreground">
-                        <MapPin size={18} className="text-primary flex-shrink-0" />
+                      <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
+                        <MapPin size={14} className="text-primary flex-shrink-0" />
                         <span>{event.venue}</span>
                       </div>
                     </div>
