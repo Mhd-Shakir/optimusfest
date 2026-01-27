@@ -77,7 +77,7 @@ export const metadata: Metadata = {
     canonical: siteConfig.url,
   },
   verification: {
-    google: "xUl-FGlPR6POWFcqi0o9u7ahbL2OmaljPIiSzgjIocw",
+    google: "E6z9MoOrvBcCITxMZJ3G5V4ful-g4zn7xFsDguSA_Q0",
     // yandex: "your-yandex-verification-code",
     // bing: "your-bing-verification-code",
   },

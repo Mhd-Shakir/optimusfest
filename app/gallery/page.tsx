@@ -9,6 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 
+import { siteConfig, breadcrumbSchema } from "@/lib/seo-config"
+
 interface GalleryImage {
     _id: string
     image: string
@@ -18,6 +20,11 @@ export default function GalleryPage() {
     const [images, setImages] = useState<GalleryImage[]>([])
     const [loading, setLoading] = useState(true)
     const [selectedImage, setSelectedImage] = useState<number | null>(null)
+
+    const breadcrumbs = breadcrumbSchema([
+        { name: "Home", url: "/" },
+        { name: "Gallery", url: "/gallery" },
+    ]);
 
     useEffect(() => {
         async function fetchGallery() {
@@ -62,6 +69,12 @@ export default function GalleryPage() {
 
     return (
         <main className="min-h-screen bg-background">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(breadcrumbs),
+                }}
+            />
             <Header />
 
             <div className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
