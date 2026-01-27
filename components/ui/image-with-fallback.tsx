@@ -25,8 +25,9 @@ export function ImageWithFallback({
 
     if (error) {
         return (
-            <div className={`flex items-center justify-center bg-gray-100 text-gray-400 ${className}`}>
-                <ImageIcon size={24} />
+            <div className={`flex flex-col items-center justify-center bg-secondary/30 border border-border/50 text-muted-foreground p-2 text-center ${className}`}>
+                <ImageIcon size={24} className="mb-1 opacity-40" />
+                <span className="text-[10px] font-medium uppercase tracking-wider opacity-50">Unavailable</span>
             </div>
         )
     }

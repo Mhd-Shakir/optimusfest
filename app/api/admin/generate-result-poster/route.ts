@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         console.error("Poster save error:", error)
         return NextResponse.json(
-            { error: "Failed to save poster" },
+            { error: error instanceof Error ? error.message : "Failed to save poster" },
             { status: 500 }
         )
     }

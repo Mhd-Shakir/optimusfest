@@ -2,9 +2,9 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import Image from "next/image"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 
 interface EventGalleryModalProps {
     isOpen: boolean
@@ -81,7 +81,7 @@ export function EventGalleryModal({
                         className="relative w-full max-w-6xl h-[80vh] mx-4"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <Image
+                        <ImageWithFallback
                             src={images[currentIndex]}
                             alt={`${eventTitle} - Photo ${currentIndex + 1}`}
                             fill
@@ -130,11 +130,11 @@ export function EventGalleryModal({
                                         setCurrentIndex(index)
                                     }}
                                     className={`relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 transition-all ${index === currentIndex
-                                            ? "ring-2 ring-white scale-110"
-                                            : "opacity-60 hover:opacity-100"
+                                        ? "ring-2 ring-white scale-110"
+                                        : "opacity-60 hover:opacity-100"
                                         }`}
                                 >
-                                    <Image
+                                    <ImageWithFallback
                                         src={image}
                                         alt={`Thumbnail ${index + 1}`}
                                         fill
