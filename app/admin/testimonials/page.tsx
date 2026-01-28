@@ -126,12 +126,15 @@ export default function AdminTestimonialsPage() {
             if (!response.ok) throw new Error("Upload failed")
 
             const data = await response.json()
-            setFormData((prev) => ({ ...prev, image: data.imageUrl }))
-
-            toast({
-                title: "Success",
-                description: "Image uploaded successfully",
-            })
+            if (data.imageUrl) {
+                setFormData((prev) => ({ ...prev, image: data.imageUrl }))
+                toast({
+                    title: "Success",
+                    description: "Image uploaded successfully",
+                })
+            } else {
+                throw new Error(data.message || "Upload failed")
+            }
         } catch (error) {
             toast({
                 title: "Error",

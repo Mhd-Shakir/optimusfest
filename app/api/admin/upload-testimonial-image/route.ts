@@ -12,24 +12,21 @@ export async function POST(request: NextRequest) {
 
         const bytes = await file.arrayBuffer()
         const buffer = Buffer.from(bytes)
+        const base64Image = `data:${file.type};base64,${buffer.toString('base64')}`
 
-        const result = await new Promise<any>((resolve, reject) => {
-            cloudinary.uploader.upload_stream(
-                {
-                    folder: "optimus_testimonials",
-                },
-                (error: any, result: any) => {
-                    if (error) reject(error)
-                    else resolve(result)
-                }
-            ).end(buffer)
+        const result = await cloudinary.uploader.upload(base64Image, {
+            folder: "optimus_testimonials",
         })
 
         const imageUrl = result.secure_url
 
         return NextResponse.json({ imageUrl, success: true })
-    } catch (error) {
+    } catch (error: any) {
         console.error("Upload error:", error)
-        return NextResponse.json({ error: "Upload failed" }, { status: 500 })
+        return NextResponse.json({
+            error: "Upload failed",
+            message: error.message || "Unknown error",
+            details: error
+        }, { status: 500 })
     }
 }
