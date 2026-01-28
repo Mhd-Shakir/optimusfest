@@ -43,6 +43,16 @@ export default function AdminLayout({
                                 Results
                             </Button>
                         </Link>
+                        <Link href="/admin/points">
+                            <Button variant="ghost" size="sm">
+                                Points
+                            </Button>
+                        </Link>
+                        <Link href="/admin/testimonials">
+                            <Button variant="ghost" size="sm">
+                                Testimonials
+                            </Button>
+                        </Link>
                         <Link href="/admin/news">
                             <Button variant="ghost" size="sm">
                                 News

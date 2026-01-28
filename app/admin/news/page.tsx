@@ -241,12 +241,7 @@ export default function AdminNewsPage() {
                                 New Article
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-background via-accent/5 to-primary/5 border-accent/20">
-                            {/* Background decoration */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-transparent to-primary/10 rounded-lg pointer-events-none" />
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-accent/20 to-transparent rounded-full blur-3xl pointer-events-none" />
-                            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-primary/20 to-transparent rounded-full blur-3xl pointer-events-none" />
-
+                        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto border border-border bg-white shadow-2xl text-black">
                             <div className="relative z-10">
                                 <DialogHeader>
                                     <DialogTitle>{editingArticle ? "Edit Article" : "Create New Article"}</DialogTitle>

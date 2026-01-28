@@ -227,12 +227,7 @@ export default function AdminEventsPage() {
                                 Add New Event
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-background via-accent/5 to-primary/5 border-white/10 overflow-hidden">
-                            {/* Background decoration */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-transparent to-primary/10 rounded-lg pointer-events-none" />
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-accent/20 to-transparent rounded-full blur-3xl pointer-events-none opacity-50" />
-                            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-primary/20 to-transparent rounded-full blur-3xl pointer-events-none opacity-50" />
-
+                        <DialogContent className="sm:max-w-[500px] border border-border bg-white shadow-2xl text-black">
                             <div className="relative z-10">
                                 <DialogHeader>
                                     <DialogTitle>Create New Event</DialogTitle>
@@ -249,7 +244,7 @@ export default function AdminEventsPage() {
                                             onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
                                             placeholder="e.g. Grand Opening Ceremony"
                                             required
-                                            className="bg-background/50 border-white/10"
+                                            className="bg-gray-50/50 border-gray-200 text-black"
                                         />
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
@@ -262,7 +257,7 @@ export default function AdminEventsPage() {
                                                 onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
                                                 placeholder="e.g. Jan 15, 2026"
                                                 required
-                                                className="bg-background/50 border-white/10"
+                                                className="bg-gray-50/50 border-gray-200 text-black"
                                             />
                                         </div>
                                         <div className="grid gap-2">
@@ -273,7 +268,7 @@ export default function AdminEventsPage() {
                                                 onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
                                                 placeholder="e.g. 10:00 AM"
                                                 required
-                                                className="bg-background/50 border-white/10"
+                                                className="bg-gray-50/50 border-gray-200 text-black"
                                             />
                                         </div>
                                     </div>
@@ -285,7 +280,7 @@ export default function AdminEventsPage() {
                                             onChange={(e) => setNewEvent({ ...newEvent, venue: e.target.value })}
                                             placeholder="e.g. Main Auditorium"
                                             required
-                                            className="bg-background/50 border-white/10"
+                                            className="bg-gray-50/50 border-gray-200 text-black"
                                         />
                                     </div>
                                     <div className="grid gap-2">
@@ -297,7 +292,7 @@ export default function AdminEventsPage() {
                                             placeholder="Brief description of the event..."
                                             rows={3}
                                             required
-                                            className="bg-background/50 border-white/10"
+                                            className="bg-gray-50/50 border-gray-200 text-black"
                                         />
                                     </div>
                                     <Button type="submit" className="w-full" disabled={creating}>

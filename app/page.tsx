@@ -3,6 +3,7 @@ import { Hero } from "@/components/hero"
 import { About } from "@/components/about"
 import { ThemeSection } from "@/components/theme-section"
 import { TeamsSection } from "@/components/teams-section"
+import { LivePoints } from "@/components/live-points"
 import { EventsSection } from "@/components/events-section"
 import { NewsSection } from "@/components/news-section"
 import { TestimonialsSection } from "@/components/testimonials-section"
@@ -29,6 +30,9 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
           <ThemeSection />
         </div>
+
+        {/* Live Points Section */}
+        <LivePoints />
 
         {/* Teams Section */}
         <div>

@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from "react"
 import { motion, useInView } from "framer-motion"
 import Image from "next/image"
 import { Quote, Star } from "lucide-react"
-import { getTestimonials, type Testimonial } from "@/lib/actions"
+import { type Testimonial } from "@/lib/actions"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Carousel,
@@ -73,7 +73,8 @@ export function TestimonialsSection() {
   useEffect(() => {
     async function fetchTestimonials() {
       try {
-        const data = await getTestimonials()
+        const response = await fetch("/api/testimonials")
+        const data = await response.json()
         setTestimonials(data.length > 0 ? data : fallbackTestimonials)
       } catch {
         setTestimonials(fallbackTestimonials)
@@ -85,7 +86,7 @@ export function TestimonialsSection() {
   }, [])
 
   return (
-    <section id="testimonials" ref={ref} className="relative py-16 md:py-24 overflow-hidden bg-gradient-to-b from-background via-accent/5 to-background">
+    <section id="testimonials" ref={ref} className="relative pt-16 md:pt-24 pb-32 md:pb-48 overflow-hidden bg-gradient-to-b from-background via-accent/5 to-background">
       {/* Background decorations */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-accent/10 to-transparent rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-primary/10 to-transparent rounded-full blur-3xl" />
@@ -124,16 +125,16 @@ export function TestimonialsSection() {
             }}
             className="w-full"
           >
-            <CarouselContent className="-ml-4 md:-ml-6">
+            <CarouselContent className="-ml-6 md:-ml-8 lg:-ml-12">
               {testimonials.map((testimonial, index) => (
-                <CarouselItem key={testimonial._id} className="pl-4 md:pl-6 md:basis-1/2 lg:basis-1/3">
+                <CarouselItem key={testimonial._id} className="pl-6 md:pl-8 lg:pl-12 md:basis-1/2 lg:basis-1/3">
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={isInView ? { opacity: 1, scale: 1 } : {}}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="h-full"
+                    className="h-full py-4"
                   >
-                    <div className="glass rounded-3xl p-6 md:p-8 h-full min-h-[320px] hover:shadow-2xl hover:shadow-accent/20 transition-all duration-500 border border-transparent hover:border-accent/30 flex flex-col mx-2 my-2">
+                    <div className="bg-white rounded-[2rem] p-8 md:p-10 h-full min-h-[350px] shadow-xl hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 border border-gray-100 flex flex-col group">
                       {/* Quote Icon */}
                       <div className="mb-4">
                         <div className="inline-flex p-3 rounded-2xl bg-gradient-to-br from-accent/20 to-primary/20 group-hover:from-accent/30 group-hover:to-primary/30 transition-all duration-300">
@@ -154,7 +155,7 @@ export function TestimonialsSection() {
                       </p>
 
                       {/* Author */}
-                      <div className="flex items-center gap-4 pt-4 border-t border-border/50">
+                      <div className="flex items-center gap-4 pt-6 border-t border-gray-100">
                         <div className="relative w-14 h-14 rounded-full overflow-hidden ring-2 ring-accent/20 flex-shrink-0">
                           <Image
                             src={testimonial.image || "/placeholder.svg?height=100&width=100&query=person portrait"}

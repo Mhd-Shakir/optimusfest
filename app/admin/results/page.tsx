@@ -341,23 +341,23 @@ export default function AdminResultsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-background/50">
             <div className="container mx-auto px-4 py-8">
                 {/* Header */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-6">
+                <div className="bg-card shadow-lg border border-border p-8 mb-6">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                             <Trophy className="text-white" size={24} />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900">Results Management</h1>
-                            <p className="text-gray-600 text-sm">Manage competition results and student achievements</p>
+                            <h1 className="text-3xl font-bold text-foreground">Results Management</h1>
+                            <p className="text-muted-foreground text-sm">Manage competition results and student achievements</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Actions Bar */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6">
+                <div className="bg-card shadow-md border border-border p-4 mb-6">
                     <div className="flex flex-col md:flex-row gap-3">
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
@@ -365,14 +365,14 @@ export default function AdminResultsPage() {
                                 placeholder="Search by student name or event..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-10 border-gray-300 focus:border-blue-500"
+                                className="pl-10 border-white/10 bg-background/50 focus:border-blue-500"
                             />
                         </div>
                         <Select value={filterCategory} onValueChange={setFilterCategory}>
-                            <SelectTrigger className="w-full md:w-48 border-gray-300">
+                            <SelectTrigger className="w-full md:w-48 border-white/10 bg-background/50">
                                 <SelectValue placeholder="Filter by category" />
                             </SelectTrigger>
-                            <SelectContent className="bg-white">
+                            <SelectContent className="bg-card">
                                 <SelectItem value="all">All Categories</SelectItem>
                                 {categories.map((cat) => (
                                     <SelectItem key={cat} value={cat}>
@@ -402,15 +402,15 @@ export default function AdminResultsPage() {
                                 key={eventKey}
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-200"
+                                className="bg-card shadow-md rounded-2xl p-6 hover:shadow-lg transition-shadow border border-border"
                             >
                                 <div className="flex items-start gap-3 mb-4">
                                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl shadow-md flex-shrink-0">
                                         <Trophy className="text-white" size={24} />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-bold text-lg text-gray-900 truncate">{result.event}</h3>
-                                        <p className="text-xs text-gray-600">{winners.length} winner{winners.length > 1 ? 's' : ''}</p>
+                                        <h3 className="font-bold text-lg text-foreground truncate">{result.event}</h3>
+                                        <p className="text-xs text-muted-foreground">{winners.length} winner{winners.length > 1 ? 's' : ''}</p>
                                     </div>
                                     <Button
                                         variant="ghost"
@@ -424,23 +424,23 @@ export default function AdminResultsPage() {
 
                                 <div className="space-y-2 mb-4">
                                     <div className="flex items-center justify-between text-sm">
-                                        <span className="text-gray-600">Category:</span>
-                                        <span className="font-semibold px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs">
+                                        <span className="text-muted-foreground">Category:</span>
+                                        <span className="font-semibold px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-xs">
                                             {result.category}
                                         </span>
                                     </div>
 
                                     {/* Winners List */}
-                                    <div className="pt-2 border-t border-gray-200">
-                                        <p className="text-xs font-semibold text-gray-700 mb-2">Winners:</p>
+                                    <div className="pt-2 border-t border-white/10">
+                                        <p className="text-xs font-semibold text-muted-foreground mb-2">Winners:</p>
                                         <div className="space-y-1">
                                             {winners.map((winner) => {
                                                 const badge = getRankBadge(winner.rank)
                                                 return (
                                                     <div key={winner._id} className="flex items-center gap-2 text-sm">
                                                         <span className="text-xs">{badge.emoji}</span>
-                                                        <span className="text-gray-700">{winner.studentName}</span>
-                                                        <span className="text-xs text-gray-500">({winner.rank === 1 ? '1st' : winner.rank === 2 ? '2nd' : '3rd'})</span>
+                                                        <span className="text-foreground">{winner.studentName}</span>
+                                                        <span className="text-xs text-muted-foreground">({winner.rank === 1 ? '1st' : winner.rank === 2 ? '2nd' : '3rd'})</span>
                                                     </div>
                                                 )
                                             })}
@@ -449,9 +449,9 @@ export default function AdminResultsPage() {
                                 </div>
 
                                 {result.poster && (
-                                    <div className="pt-4 border-t border-gray-200">
+                                    <div className="pt-4 border-t border-white/10">
                                         <div className="flex items-center justify-between mb-2">
-                                            <span className="text-xs font-medium flex items-center gap-1 text-gray-600">
+                                            <span className="text-xs font-medium flex items-center gap-1 text-muted-foreground">
                                                 <ImageIcon size={12} />
                                                 Event Poster
                                             </span>
@@ -475,12 +475,12 @@ export default function AdminResultsPage() {
                 </div>
 
                 {filteredResults.length === 0 && (
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-20 text-center">
-                        <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gray-100 flex items-center justify-center">
-                            <Trophy className="text-gray-400" size={40} />
+                    <div className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-sm border border-white/10 p-20 text-center">
+                        <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-primary/10 flex items-center justify-center">
+                            <Trophy className="text-muted-foreground" size={40} />
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">No results found</h3>
-                        <p className="text-gray-600">
+                        <h3 className="text-lg font-semibold text-foreground mb-2">No results found</h3>
+                        <p className="text-muted-foreground">
                             {searchQuery || filterCategory !== "all"
                                 ? "Try adjusting your filters"
                                 : "Start by adding your first result"}
@@ -488,12 +488,11 @@ export default function AdminResultsPage() {
                     </div>
                 )}
 
-                {/* Add Result Dialog */}
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto bg-white">
-                        <DialogHeader className="border-b border-gray-200 pb-4">
-                            <DialogTitle className="text-2xl flex items-center gap-3 text-gray-900">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto border border-border bg-white shadow-2xl text-black">
+                        <DialogHeader className="border-b border-white/10 pb-4">
+                            <DialogTitle className="text-2xl flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
                                     <Sparkles className="text-white" size={20} />
                                 </div>
                                 Add New Result
@@ -506,12 +505,12 @@ export default function AdminResultsPage() {
                         <div className="space-y-6 py-6">
                             {/* Step 1: Category */}
                             <div className="space-y-2">
-                                <Label className="text-gray-900 font-semibold">Category *</Label>
+                                <Label className="font-semibold">Category *</Label>
                                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                                    <SelectTrigger className="border-gray-300">
+                                    <SelectTrigger className="border-gray-200 bg-gray-50/50">
                                         <SelectValue placeholder="Select category" />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-white">
+                                    <SelectContent className="bg-card">
                                         {categories.map((cat) => (
                                             <SelectItem key={cat} value={cat}>
                                                 {cat}
@@ -524,12 +523,12 @@ export default function AdminResultsPage() {
                             {/* Step 2: Event (shows only if category selected) */}
                             {selectedCategory && (
                                 <div className="space-y-2">
-                                    <Label className="text-gray-900 font-semibold">Event *</Label>
+                                    <Label className="font-semibold">Event *</Label>
                                     <Select value={selectedEvent} onValueChange={setSelectedEvent}>
-                                        <SelectTrigger className="border-gray-300">
+                                        <SelectTrigger className="border-gray-200 bg-gray-50/50">
                                             <SelectValue placeholder="Select event" />
                                         </SelectTrigger>
-                                        <SelectContent className="max-h-[200px] bg-white">
+                                        <SelectContent className="max-h-[200px] bg-card">
                                             {getCategoryEvents().map((event) => (
                                                 <SelectItem key={event} value={event}>
                                                     {event}
@@ -549,7 +548,7 @@ export default function AdminResultsPage() {
                                             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-2xl shadow-md">
                                                 🥇
                                             </div>
-                                            <h3 className="font-bold text-lg text-gray-900">First Place</h3>
+                                            <h3 className="font-bold text-lg text-black">First Place</h3>
                                         </div>
                                         {firstPlace.map((student, index) => (
                                             <div key={index} className="mb-3 last:mb-0">
@@ -558,7 +557,7 @@ export default function AdminResultsPage() {
                                                         placeholder="Student name"
                                                         value={student.studentName}
                                                         onChange={(e) => handleUpdateStudent(1, index, "studentName", e.target.value)}
-                                                        className="flex-1 bg-white border-yellow-300"
+                                                        className="flex-1 bg-white border-gray-300 text-black"
                                                     />
                                                     {firstPlace.length > 1 && (
                                                         <Button
@@ -592,7 +591,7 @@ export default function AdminResultsPage() {
                                             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-300 to-gray-500 flex items-center justify-center text-2xl shadow-md">
                                                 🥈
                                             </div>
-                                            <h3 className="font-bold text-lg text-gray-900">Second Place</h3>
+                                            <h3 className="font-bold text-lg text-black">Second Place</h3>
                                         </div>
                                         {secondPlace.map((student, index) => (
                                             <div key={index} className="mb-3 last:mb-0">
@@ -601,7 +600,7 @@ export default function AdminResultsPage() {
                                                         placeholder="Student name"
                                                         value={student.studentName}
                                                         onChange={(e) => handleUpdateStudent(2, index, "studentName", e.target.value)}
-                                                        className="flex-1 bg-white border-gray-300"
+                                                        className="flex-1 bg-white border-gray-300 text-black"
                                                     />
                                                     {secondPlace.length > 1 && (
                                                         <Button
@@ -635,7 +634,7 @@ export default function AdminResultsPage() {
                                             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-2xl shadow-md">
                                                 🥉
                                             </div>
-                                            <h3 className="font-bold text-lg text-gray-900">Third Place</h3>
+                                            <h3 className="font-bold text-lg text-black">Third Place</h3>
                                         </div>
                                         {thirdPlace.map((student, index) => (
                                             <div key={index} className="mb-3 last:mb-0">
@@ -644,7 +643,7 @@ export default function AdminResultsPage() {
                                                         placeholder="Student name"
                                                         value={student.studentName}
                                                         onChange={(e) => handleUpdateStudent(3, index, "studentName", e.target.value)}
-                                                        className="flex-1 bg-white border-orange-300"
+                                                        className="flex-1 bg-white border-gray-300 text-black"
                                                     />
                                                     {thirdPlace.length > 1 && (
                                                         <Button
@@ -673,14 +672,14 @@ export default function AdminResultsPage() {
                                     </div>
 
                                     {/* Auto-generation Note */}
-                                    <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4">
+                                    <div className="bg-blue-500/10 border-2 border-blue-500/20 rounded-2xl p-4">
                                         <div className="flex items-start gap-3">
                                             <Sparkles className="text-blue-600 mt-0.5 flex-shrink-0" size={20} />
                                             <div className="space-y-1">
-                                                <p className="text-sm font-semibold text-blue-900">
+                                                <p className="text-sm font-semibold text-blue-400">
                                                     Poster Auto-Generation
                                                 </p>
-                                                <p className="text-xs text-blue-700">
+                                                <p className="text-xs text-blue-300">
                                                     Beautiful result posters will be automatically generated for all students when you save.
                                                 </p>
                                             </div>
@@ -691,7 +690,7 @@ export default function AdminResultsPage() {
                         </div>
 
                         <div className="flex gap-3 pt-4 border-t border-gray-200">
-                            <Button type="button" variant="outline" onClick={resetForm} className="flex-1 border-gray-300">
+                            <Button type="button" variant="outline" onClick={resetForm} className="flex-1 border-gray-200">
                                 Cancel
                             </Button>
                             <Button

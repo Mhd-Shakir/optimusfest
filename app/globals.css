@@ -3,31 +3,32 @@
 
 /* Optimized theme with exact logo colors - Blue (#6EB1E5) + Green (#69C684) */
 :root {
-  --background: linear-gradient(135deg, #E8F8EC 0%, #E3F2FD 100%);
-  --background-solid: oklch(0.07 0.01 240);
-  --foreground: #1a1a1a;
-  --card: rgba(255, 255, 255, 0.7);
-  --card-foreground: #1a1a1a;
+  --background: #ffffff;
+  --background-solid: #ffffff;
+  --foreground: #000000;
+  --card: rgba(255, 255, 255, 0.8);
+  --card-foreground: #000000;
   --popover: rgba(255, 255, 255, 0.95);
-  --popover-foreground: #1a1a1a;
+  --popover-foreground: #000000;
 
-  /* Primary is Blue from logo #6EB1E5 - More accurate OKLCH conversion */
-  --primary: #2c2c2c;
-  --primary-foreground: oklch(0.07 0.01 240);
+  /* Primary - High contrast black for light mode */
+  --primary: #000000;
+  --primary-foreground: #ffffff;
 
-  --secondary: oklch(0.15 0.01 240);
-  --secondary-foreground: #1a1a1a;
-  --muted: oklch(0.18 0.01 240);
-  --muted-foreground: rgba(26, 26, 26, 0.7);
+  --secondary: #f4f4f5;
+  --secondary-foreground: #000000;
 
-  /* Accent is Green from logo #69C684 - More accurate OKLCH conversion */
-  --accent: oklch(0.73 0.11 145);
-  --accent-foreground: #1a1a1a;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
 
-  --destructive: oklch(0.577 0.245 27.325);
+  /* Accent is Green from logo #69C684 */
+  --accent: #69C684;
+  --accent-foreground: #ffffff;
+
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: rgba(26, 26, 26, 0.1);
-  --input: rgba(255, 255, 255, 0.5);
+  --border: #e4e4e7;
+  --input: #e4e4e7;
 
   /* Ring color matches primary blue */
   --ring: oklch(0.72 0.095 230);
@@ -70,25 +71,25 @@
 }
 
 .dark {
-  --background: linear-gradient(135deg, #E8F8EC 0%, #E3F2FD 100%);
+  --background: oklch(0.07 0.01 240);
   --background-solid: oklch(0.07 0.01 240);
-  --foreground: #1a1a1a;
-  --card: rgba(255, 255, 255, 0.7);
-  --card-foreground: #1a1a1a;
-  --popover: rgba(255, 255, 255, 0.95);
-  --popover-foreground: #1a1a1a;
-  --primary: #2c2c2c;
+  --foreground: oklch(0.98 0.01 240);
+  --card: rgba(20, 20, 20, 0.7);
+  --card-foreground: oklch(0.98 0.01 240);
+  --popover: oklch(0.12 0.01 240);
+  --popover-foreground: oklch(0.98 0.01 240);
+  --primary: oklch(0.98 0.01 240);
   --primary-foreground: oklch(0.07 0.01 240);
-  --secondary: oklch(0.15 0.01 240);
-  --secondary-foreground: #1a1a1a;
-  --muted: oklch(0.18 0.01 240);
-  --muted-foreground: rgba(26, 26, 26, 0.7);
+  --secondary: oklch(0.18 0.01 240);
+  --secondary-foreground: oklch(0.98 0.01 240);
+  --muted: oklch(0.22 0.01 240);
+  --muted-foreground: oklch(0.7 0.01 240);
   --accent: oklch(0.73 0.11 145);
-  --accent-foreground: #1a1a1a;
+  --accent-foreground: oklch(0.07 0.01 240);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: #ffffff;
-  --border: rgba(26, 26, 26, 0.1);
-  --input: rgba(255, 255, 255, 0.5);
+  --border: oklch(0.22 0.01 240);
+  --input: oklch(0.15 0.01 240);
   --ring: oklch(0.72 0.095 230);
   --chart-1: oklch(0.72 0.095 230);
   --chart-2: oklch(0.73 0.11 145);
@@ -96,13 +97,19 @@
   --chart-4: oklch(0.76 0.09 155);
   --chart-5: oklch(0.65 0.12 190);
   --sidebar: oklch(0.09 0.01 240);
-  --sidebar-foreground: #1a1a1a;
-  --sidebar-primary: #2c2c2c;
+  --sidebar-foreground: oklch(0.98 0.01 240);
+  --sidebar-primary: oklch(0.98 0.01 240);
   --sidebar-primary-foreground: oklch(0.07 0.01 240);
   --sidebar-accent: oklch(0.15 0.01 240);
-  --sidebar-accent-foreground: #1a1a1a;
+  --sidebar-accent-foreground: oklch(0.98 0.01 240);
   --sidebar-border: oklch(0.22 0.02 240);
   --sidebar-ring: oklch(0.72 0.095 230);
+
+  /* Overrides for glass and glow effects in dark mode */
+  --glass-bg: rgba(20, 20, 20, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glow-blue: rgba(110, 177, 229, 0.2);
+  --glow-green: rgba(105, 198, 132, 0.2);
 }
 
 @layer theme {

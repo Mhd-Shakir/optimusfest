@@ -2,9 +2,11 @@
 
 import { useRef, useEffect, useState } from "react"
 import { motion, useInView, AnimatePresence } from "framer-motion"
-import { X, ChevronLeft, ChevronRight, ImageIcon } from "lucide-react"
+import { X, ChevronLeft, ChevronRight, ImageIcon, ArrowRight } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ImageWithFallback } from "@/components/ui/image-with-fallback"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 interface GalleryImage {
   _id: string
@@ -87,7 +89,7 @@ export function GallerySection() {
 
           {/* Gallery Grid with Stack Effect */}
           {loading ? (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mt-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-8 md:gap-10 mt-10">
               {[...Array(8)].map((_, i) => (
                 <Skeleton key={i} className="aspect-square rounded-2xl" />
               ))}
@@ -98,7 +100,7 @@ export function GallerySection() {
               <p className="text-muted-foreground text-lg">No images yet. Check back soon!</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mt-10 px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-8 md:gap-10 mt-10 px-4">
               {images.slice(0, 8).map((img, index) => {
                 const hasEnoughImages = images.length > 8
 
@@ -155,6 +157,23 @@ export function GallerySection() {
                 )
               })}
             </div>
+          )}
+
+          {/* View All Button */}
+          {images.length > 0 && !loading && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="mt-16 text-center"
+            >
+              <Link href="/gallery">
+                <Button size="lg" variant="outline" className="rounded-full px-10 py-6 text-lg group border-primary/20 hover:border-primary/50 hover:bg-primary/5 transition-all">
+                  View Full Gallery
+                  <ChevronRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            </motion.div>
           )}
         </div>
       </section>
