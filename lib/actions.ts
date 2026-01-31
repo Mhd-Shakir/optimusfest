@@ -1,13 +1,19 @@
 "use server"
 
+import dbConnect from "@/lib/mongodb"
+import ResultModel from "@/lib/models/Result"
+
 export interface Result {
   _id: string
-  rank: number
-  participant: string
-  team?: string
-  category: string
-  score: number
   event: string
+  category: string
+  winners: Array<{
+    rank: number
+    studentName: string
+  }>
+  poster?: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface Event {
@@ -60,82 +66,6 @@ export interface GalleryImage {
   category: string
   year: number
 }
-
-// Static data for preview
-const staticResults: Result[] = [
-  {
-    _id: "1",
-    rank: 1,
-    participant: "Aisha Rahman",
-    team: "Phoenix Academy",
-    category: "Dance",
-    score: 98.5,
-    event: "Classical Dance",
-  },
-  {
-    _id: "2",
-    rank: 2,
-    participant: "Marcus Chen",
-    team: "Harmony Institute",
-    category: "Music",
-    score: 97.2,
-    event: "Western Vocals",
-  },
-  {
-    _id: "3",
-    rank: 3,
-    participant: "Priya Sharma",
-    team: "Creative Arts School",
-    category: "Visual Arts",
-    score: 96.8,
-    event: "Oil Painting",
-  },
-  {
-    _id: "4",
-    rank: 4,
-    participant: "James Wilson",
-    team: "Metro Arts Academy",
-    category: "Drama",
-    score: 96.5,
-    event: "Monologue",
-  },
-  {
-    _id: "5",
-    rank: 5,
-    participant: "Sophia Lee",
-    team: "Elite Performance",
-    category: "Dance",
-    score: 95.9,
-    event: "Contemporary Dance",
-  },
-  {
-    _id: "6",
-    rank: 6,
-    participant: "Carlos Mendez",
-    team: "Riverside Academy",
-    category: "Music",
-    score: 95.4,
-    event: "Instrumental",
-  },
-  {
-    _id: "7",
-    rank: 7,
-    participant: "Emily Johnson",
-    team: "Writers Guild",
-    category: "Literary",
-    score: 95.0,
-    event: "Poetry Slam",
-  },
-  {
-    _id: "8",
-    rank: 8,
-    participant: "Raj Patel",
-    team: "Virtuoso Academy",
-    category: "Music",
-    score: 94.7,
-    event: "Indian Classical",
-  },
-]
 
 const staticEvents: Event[] = [
   {
@@ -240,24 +170,43 @@ const staticGalleryImages: GalleryImage[] = [
 ]
 
 export async function getResults(search?: string, category?: string): Promise<Result[]> {
-  let results = [...staticResults]
-  if (search) {
-    const searchLower = search.toLowerCase()
-    results = results.filter(
-      (r) =>
-        r.participant.toLowerCase().includes(searchLower) ||
-        r.team?.toLowerCase().includes(searchLower) ||
-        r.event.toLowerCase().includes(searchLower),
-    )
+  try {
+    await dbConnect()
+    let query: any = {}
+
+    if (search) {
+      const regex = new RegExp(search, "i")
+      query.$or = [
+        { event: regex },
+        { category: regex },
+        { "winners.studentName": regex }
+      ]
+    }
+
+    if (category && category !== "all") {
+      query.category = { $regex: new RegExp(`^${category}$`, "i") }
+    }
+
+    const results = await ResultModel.find(query).sort({ createdAt: -1 })
+    return results.map(doc => ({
+      _id: doc._id.toString(),
+      event: doc.event,
+      category: doc.category,
+      winners: (doc.winners || []).map((w: any) => ({
+        rank: w.rank,
+        studentName: w.studentName
+      })),
+      poster: doc.poster,
+      createdAt: doc.createdAt?.toISOString(),
+      updatedAt: doc.updatedAt?.toISOString(),
+    }))
+  } catch (error) {
+    console.error("Error in getResults action:", error)
+    return []
   }
-  if (category && category !== "all") {
-    results = results.filter((r) => r.category.toLowerCase() === category.toLowerCase())
-  }
-  return results.sort((a, b) => a.rank - b.rank)
 }
 
 export async function getEvents(category?: string): Promise<Event[]> {
-  // Import dynamically to avoid issues with server/client boundaries
   const { getEventsData } = await import("./events-storage")
   const events = await getEventsData()
 

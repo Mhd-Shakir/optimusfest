@@ -11,6 +11,17 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 interface Testimonial {
     _id: string
@@ -26,6 +37,8 @@ export default function AdminTestimonialsPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null)
     const [uploading, setUploading] = useState(false)
+    const [testimonialToDelete, setTestimonialToDelete] = useState<string | null>(null)
+    const [isDeleting, setIsDeleting] = useState(false)
     const { toast } = useToast()
 
     const [formData, setFormData] = useState({
@@ -87,11 +100,12 @@ export default function AdminTestimonialsPage() {
         }
     }
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure?")) return
+    const handleDelete = async () => {
+        if (!testimonialToDelete) return
+        setIsDeleting(true)
 
         try {
-            const response = await fetch(`/api/admin/testimonials/${id}`, {
+            const response = await fetch(`/api/admin/testimonials/${testimonialToDelete}`, {
                 method: "DELETE",
             })
 
@@ -109,6 +123,9 @@ export default function AdminTestimonialsPage() {
                 description: "Failed to delete testimonial",
                 variant: "destructive",
             })
+        } finally {
+            setIsDeleting(false)
+            setTestimonialToDelete(null)
         }
     }
 
@@ -312,13 +329,36 @@ export default function AdminTestimonialsPage() {
                             transition={{ delay: index * 0.1 }}
                         >
                             <Card className="glass h-full flex flex-col relative overflow-hidden group">
-                                <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                                    <Button size="icon" variant="secondary" onClick={() => handleEdit(testimonial)}>
+                                <div className="absolute top-4 right-4 flex gap-2 z-10">
+                                    <Button size="icon" variant="outline" className="bg-white border-gray-200 text-black hover:bg-gray-100" onClick={() => handleEdit(testimonial)}>
                                         <Edit size={16} />
                                     </Button>
-                                    <Button size="icon" variant="destructive" onClick={() => handleDelete(testimonial._id)}>
-                                        <Trash2 size={16} />
-                                    </Button>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button size="icon" variant="outline" className="bg-white border-gray-200 text-black hover:bg-gray-100" onClick={() => setTestimonialToDelete(testimonial._id)}>
+                                                <Trash2 size={16} />
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent className="bg-white text-black border border-border">
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                <AlertDialogDescription className="text-gray-600">
+                                                    This action cannot be undone. This will permanently delete the testimonial
+                                                    from the database.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel className="bg-gray-100 hover:bg-gray-200 border-none" onClick={() => setTestimonialToDelete(null)}>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction
+                                                    onClick={handleDelete}
+                                                    className="bg-red-600 hover:bg-red-700 text-white border-none"
+                                                    disabled={isDeleting}
+                                                >
+                                                    {isDeleting ? "Deleting..." : "Delete"}
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
                                 </div>
                                 <CardContent className="p-6 flex flex-col h-full">
                                     <Quote className="text-primary/20 mb-4" size={32} />

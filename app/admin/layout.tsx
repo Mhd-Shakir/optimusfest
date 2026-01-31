@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export const metadata: Metadata = {
@@ -8,11 +8,16 @@ export const metadata: Metadata = {
     description: "Admin dashboard for managing Optimus Arts Festival",
 }
 
-export default function AdminLayout({
+import { cookies } from "next/headers"
+
+export default async function AdminLayout({
     children,
 }: {
     children: React.ReactNode
 }) {
+    const cookieStore = await cookies()
+    const isAdmin = cookieStore.get("is_admin")?.value === "true"
+
     return (
         <div className="min-h-screen bg-background">
             {/* Admin Header */}
@@ -32,38 +37,47 @@ export default function AdminLayout({
                     </div>
 
                     {/* Navigation */}
-                    <nav className="flex items-center gap-2">
-                        <Link href="/admin/events">
-                            <Button variant="ghost" size="sm">
-                                Events
-                            </Button>
-                        </Link>
-                        <Link href="/admin/results">
-                            <Button variant="ghost" size="sm">
-                                Results
-                            </Button>
-                        </Link>
-                        <Link href="/admin/points">
-                            <Button variant="ghost" size="sm">
-                                Points
-                            </Button>
-                        </Link>
-                        <Link href="/admin/testimonials">
-                            <Button variant="ghost" size="sm">
-                                Testimonials
-                            </Button>
-                        </Link>
-                        <Link href="/admin/news">
-                            <Button variant="ghost" size="sm">
-                                News
-                            </Button>
-                        </Link>
-                        <Link href="/admin/gallery">
-                            <Button variant="ghost" size="sm">
-                                Gallery
-                            </Button>
-                        </Link>
-                    </nav>
+                    {isAdmin && (
+                        <nav className="flex items-center gap-2">
+                            <Link href="/admin/events">
+                                <Button variant="ghost" size="sm">
+                                    Events
+                                </Button>
+                            </Link>
+                            <Link href="/admin/results">
+                                <Button variant="ghost" size="sm">
+                                    Results
+                                </Button>
+                            </Link>
+                            <Link href="/admin/points">
+                                <Button variant="ghost" size="sm">
+                                    Points
+                                </Button>
+                            </Link>
+                            <Link href="/admin/testimonials">
+                                <Button variant="ghost" size="sm">
+                                    Testimonials
+                                </Button>
+                            </Link>
+                            <Link href="/admin/news">
+                                <Button variant="ghost" size="sm">
+                                    News
+                                </Button>
+                            </Link>
+                            <Link href="/admin/gallery">
+                                <Button variant="ghost" size="sm">
+                                    Gallery
+                                </Button>
+                            </Link>
+                            <div className="h-6 w-px bg-border mx-2" />
+                            <form action="/api/admin/logout" method="POST">
+                                <Button variant="outline" size="sm" type="submit" className="text-destructive hover:bg-destructive/10">
+                                    <LogOut className="mr-2 h-4 w-4" />
+                                    Logout
+                                </Button>
+                            </form>
+                        </nav>
+                    )}
                 </div>
             </header>
 

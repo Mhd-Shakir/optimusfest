@@ -3,10 +3,11 @@ import { deleteEvent } from "@/lib/events-storage"
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        await deleteEvent(params.id)
+        const { id } = await params
+        await deleteEvent(id)
         return NextResponse.json({ success: true })
     } catch (error) {
         return NextResponse.json({ error: "Failed to delete event" }, { status: 500 })

@@ -3,11 +3,13 @@ import Result, { IResult } from "@/lib/models/Result"
 
 export interface ResultData {
     _id: string
-    studentName: string
     event: string
     category: string
-    rank: number
-    score?: number
+    winners: {
+        rank: number
+        studentName: string
+    }[]
+    posters?: string[]
     poster?: string
     createdAt: string
     updatedAt: string
@@ -16,14 +18,16 @@ export interface ResultData {
 function mapDocumentToResult(doc: IResult): ResultData {
     return {
         _id: doc._id.toString(),
-        studentName: doc.studentName,
         event: doc.event,
         category: doc.category,
-        rank: doc.rank,
-        score: doc.score,
+        winners: (doc.winners || []).map((w: any) => ({
+            rank: w.rank,
+            studentName: w.studentName
+        })),
+        posters: doc.posters || [],
         poster: doc.poster,
-        createdAt: doc.createdAt.toISOString(),
-        updatedAt: doc.updatedAt.toISOString(),
+        createdAt: doc.createdAt?.toISOString() || new Date().toISOString(),
+        updatedAt: doc.updatedAt?.toISOString() || new Date().toISOString(),
     }
 }
 
@@ -99,7 +103,11 @@ export async function searchResults(query: string): Promise<ResultData[]> {
         await dbConnect()
         const regex = new RegExp(query, "i")
         const results = await Result.find({
-            $or: [{ studentName: regex }, { event: regex }, { category: regex }],
+            $or: [
+                { event: regex },
+                { category: regex },
+                { "winners.studentName": regex }
+            ],
         }).sort({ createdAt: -1 })
         return results.map(mapDocumentToResult)
     } catch (error) {
@@ -127,4 +135,3 @@ export async function removeResultPoster(id: string): Promise<void> {
         throw error
     }
 }
-

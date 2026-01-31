@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { GeminiResultsInterface } from "@/components/gemini-results-interface"
+import { InstagramResultsBot } from "@/components/instagram-results-bot"
 import { siteConfig, breadcrumbSchema } from "@/lib/seo-config"
 import { Sparkles, Trophy } from "lucide-react"
 
@@ -34,13 +34,13 @@ export default function ResultsPage() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
               <Sparkles size={18} />
-              <span className="text-sm font-medium">AI-Powered Search</span>
+              <span className="text-sm font-medium">Interactive Results Bot</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
               Competition Results
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Ask our AI assistant powered by Google Gemini to find results. Natural language search makes it easy!
+              Meet our interactive results assistant. Search for winners, browse categories, and download official event posters.
             </p>
             <div className="flex items-center justify-center gap-6 mt-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
@@ -54,8 +54,8 @@ export default function ResultsPage() {
             </div>
           </div>
 
-          {/* Gemini AI Results Interface */}
-          <GeminiResultsInterface />
+          {/* New Instagram Style Results Interface */}
+          <InstagramResultsBot />
         </div>
       </div>
       <Footer />

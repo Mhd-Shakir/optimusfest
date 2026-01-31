@@ -12,6 +12,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel"
 
 const fallbackTestimonials: Testimonial[] = [
@@ -69,6 +70,17 @@ export function TestimonialsSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [loading, setLoading] = useState(true)
+  const [api, setApi] = useState<CarouselApi>()
+
+  useEffect(() => {
+    if (!api) return
+
+    const autoplay = setInterval(() => {
+      api.scrollNext()
+    }, 4000)
+
+    return () => clearInterval(autoplay)
+  }, [api])
 
   useEffect(() => {
     async function fetchTestimonials() {
@@ -119,6 +131,7 @@ export function TestimonialsSection() {
           </div>
         ) : (
           <Carousel
+            setApi={setApi}
             opts={{
               align: "start",
               loop: true,

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Send, Trophy, Award, Sparkles, ChevronRight, Search, Download, ImageIcon } from "lucide-react"
+import { Send, Trophy, Award, Sparkles, ChevronRight, Search, Download, ImageIcon, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -16,16 +16,18 @@ type Message = {
     options?: Array<{ id: string; label: string; icon?: React.ReactNode }>
     results?: Array<{
         _id: string
-        studentName: string
         event: string
         category: string
-        rank: number
-        score?: number
+        winners: Array<{
+            rank: number
+            studentName: string
+        }>
         poster?: string
+        posters?: string[]
     }>
 }
 
-const categories = ["Alpha", "Beta", "Omega"]
+const categories = ["Alpha", "Beta", "Omega", "General-A", "General-B"]
 
 export function InstagramResultsBot() {
     const [messages, setMessages] = useState<Message[]>([])
@@ -115,7 +117,7 @@ export function InstagramResultsBot() {
                 if (results.length === 0) {
                     addBotMessage("No results found yet! 😔\n\nCheck back later once results are announced.")
                 } else {
-                    addBotMessage(`Found ${results.length} results! 🎉`, undefined, results)
+                    addBotMessage(`Found results for ${results.length} events! 🎉`, undefined, results)
                 }
                 setTimeout(() => {
                     addBotMessage("What else can I help you with?", [
@@ -176,7 +178,7 @@ export function InstagramResultsBot() {
                 ])
             } else {
                 addBotMessage(
-                    `Found ${results.length} result${results.length > 1 ? "s" : ""} for "${query}"! 🎉`,
+                    `Found ${results.length} event${results.length > 1 ? "s" : ""} matching "${query}"! 🎉`,
                     undefined,
                     results
                 )
@@ -192,116 +194,112 @@ export function InstagramResultsBot() {
 
     const getRankEmoji = (rank: number) => {
         switch (rank) {
-            case 1:
-                return "🥇"
-            case 2:
-                return "🥈"
-            case 3:
-                return "🥉"
-            default:
-                return "🏅"
+            case 1: return "🥇"
+            case 2: return "🥈"
+            case 3: return "🥉"
+            default: return "🏅"
         }
     }
 
     const getRankColor = (rank: number) => {
         switch (rank) {
-            case 1:
-                return "from-yellow-400 to-yellow-600"
-            case 2:
-                return "from-gray-300 to-gray-500"
-            case 3:
-                return "from-orange-400 to-orange-600"
-            default:
-                return "from-blue-400 to-blue-600"
+            case 1: return "from-yellow-400 to-yellow-600"
+            case 2: return "from-gray-300 to-gray-500"
+            case 3: return "from-orange-400 to-orange-600"
+            default: return "from-blue-400 to-blue-600"
         }
     }
 
     return (
         <div className="max-w-2xl mx-auto">
             {/* Instagram-style Chat Container */}
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-border/50">
+            <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 ring-1 ring-white/20">
                 {/* Gradient Header - Instagram Style */}
-                <div className="relative bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 p-6">
-                    <div className="absolute inset-0 bg-black/10" />
+                <div className="relative bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 p-6 overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20" />
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full -mr-16 -mt-16" />
+
                     <div className="relative flex items-center gap-4">
                         <div className="relative">
-                            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-white to-gray-100 p-1">
+                            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-white to-gray-200 p-1 shadow-xl">
                                 <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center">
                                     <Trophy className="text-white" size={28} />
                                 </div>
                             </div>
-                            <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full" />
+                            <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full shadow-sm" />
                         </div>
                         <div className="flex-1">
-                            <h3 className="font-bold text-white text-xl flex items-center gap-2">
+                            <h3 className="font-extrabold text-white text-xl tracking-tight flex items-center gap-2">
                                 Optimus Results Bot
-                                <Sparkles size={18} className="text-yellow-300" />
+                                <Sparkles size={16} className="text-yellow-300 animate-pulse" />
                             </h3>
-                            <p className="text-white/90 text-sm">Active now</p>
+                            <div className="flex items-center gap-1.5">
+                                <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                                <p className="text-white/80 text-xs font-medium uppercase tracking-widest">Active Now</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Messages Area - Instagram Style */}
-                <div className="h-[600px] overflow-y-auto bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 p-6 space-y-4">
+                <div className="h-[650px] overflow-y-auto bg-[#FAFAFA] dark:bg-[#0A0A0A] p-6 space-y-6 scrollbar-hide">
                     <AnimatePresence>
                         {messages.map((message) => (
                             <motion.div
                                 key={message.id}
                                 initial={{ opacity: 0, y: 20, scale: 0.95 }}
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                                transition={{ duration: 0.3, ease: "easeOut" }}
+                                transition={{ duration: 0.4, ease: "easeOut" }}
                                 className={cn("flex", message.type === "user" ? "justify-end" : "justify-start")}
                             >
-                                <div className={cn("max-w-[85%] space-y-3")}>
+                                <div className={cn("max-w-[90%] space-y-3")}>
                                     {/* Message Bubble */}
                                     <div
                                         className={cn(
-                                            "rounded-3xl px-5 py-3 shadow-lg",
+                                            "rounded-[1.75rem] px-6 py-4 shadow-md",
                                             message.type === "user"
-                                                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-br-md ml-auto"
-                                                : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-bl-md"
+                                                ? "bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-br-sm ml-auto"
+                                                : "bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-bl-sm"
                                         )}
                                     >
                                         <p
                                             className={cn(
-                                                "whitespace-pre-line text-sm leading-relaxed",
-                                                message.type === "bot" ? "text-foreground" : "text-white"
+                                                "whitespace-pre-line text-[0.95rem] leading-relaxed font-medium",
+                                                message.type === "bot" ? "text-gray-800 dark:text-gray-100" : "text-white"
                                             )}
                                         >
                                             {message.content}
                                         </p>
-                                        <div
+                                        <p
                                             className={cn(
-                                                "text-xs mt-2",
-                                                message.type === "user" ? "text-white/80" : "text-muted-foreground"
+                                                "text-[0.65rem] mt-2 font-bold uppercase tracking-wider opacity-60",
+                                                message.type === "user" ? "text-white" : "text-gray-400"
                                             )}
                                         >
                                             {message.timestamp.toLocaleTimeString([], {
                                                 hour: "2-digit",
                                                 minute: "2-digit",
                                             })}
-                                        </div>
+                                        </p>
                                     </div>
 
                                     {/* Options */}
                                     {message.options && (
-                                        <div className="space-y-2">
+                                        <div className="grid grid-cols-1 gap-2">
                                             {message.options.map((option) => (
                                                 <motion.button
                                                     key={option.id}
-                                                    initial={{ opacity: 0, x: -20 }}
-                                                    animate={{ opacity: 1, x: 0 }}
-                                                    transition={{ delay: 0.1 }}
+                                                    whileHover={{ scale: 1.02, x: 5 }}
+                                                    whileTap={{ scale: 0.98 }}
                                                     onClick={() => handleOptionClick(option.id)}
-                                                    className="w-full bg-white dark:bg-gray-800 border-2 border-purple-500/30 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-950/30 rounded-2xl p-4 text-left transition-all duration-200 group shadow-sm flex items-center justify-between"
+                                                    className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-purple-300 dark:hover:border-purple-900 hover:bg-purple-50/50 dark:hover:bg-purple-900/10 rounded-2xl p-4 text-left transition-all duration-300 group shadow-sm flex items-center justify-between"
                                                 >
-                                                    <span className="font-semibold text-foreground group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                                                    <span className="font-bold text-gray-700 dark:text-gray-200 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                                                         {option.label}
                                                     </span>
                                                     <ChevronRight
-                                                        className="text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                        size={20}
+                                                        className="text-purple-400 group-hover:text-purple-600 dark:group-hover:text-purple-400"
+                                                        size={18}
                                                     />
                                                 </motion.button>
                                             ))}
@@ -309,83 +307,107 @@ export function InstagramResultsBot() {
                                     )}
 
                                     {/* Results Display */}
-                                    {message.results && message.results.length > 0 && (
-                                        <div className="space-y-3">
+                                    {message.results && (
+                                        <div className="space-y-4 pt-2">
                                             {message.results.map((result) => (
                                                 <motion.div
                                                     key={result._id}
                                                     initial={{ opacity: 0, scale: 0.9 }}
                                                     animate={{ opacity: 1, scale: 1 }}
-                                                    transition={{ delay: 0.1 }}
-                                                    className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow"
+                                                    className="bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-xl border border-gray-100 dark:border-gray-800"
                                                 >
-                                                    <div className="flex items-start gap-4">
-                                                        <div
-                                                            className={cn(
-                                                                "w-14 h-14 rounded-full bg-gradient-to-br flex items-center justify-center text-2xl shadow-lg flex-shrink-0",
-                                                                getRankColor(result.rank)
-                                                            )}
-                                                        >
-                                                            {getRankEmoji(result.rank)}
-                                                        </div>
-                                                        <div className="flex-1 min-w-0">
-                                                            <h4 className="font-bold text-foreground text-lg mb-1">
-                                                                {result.studentName}
-                                                            </h4>
-                                                            <div className="space-y-1 text-sm text-muted-foreground">
-                                                                <p className="flex items-center gap-2">
-                                                                    <Trophy size={14} className="text-purple-500" />
-                                                                    <span className="font-medium">{result.event}</span>
-                                                                </p>
-                                                                <p className="flex items-center gap-2">
-                                                                    <Award size={14} className="text-pink-500" />
-                                                                    <span>{result.category} Category</span>
-                                                                </p>
-                                                                {result.score && (
-                                                                    <p className="flex items-center gap-2">
-                                                                        <Sparkles size={14} className="text-orange-500" />
-                                                                        <span className="font-mono font-bold text-purple-600 dark:text-purple-400">
-                                                                            {result.score} pts
-                                                                        </span>
-                                                                    </p>
-                                                                )}
+                                                    {/* Card Header */}
+                                                    <div className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800/50 dark:to-gray-900 p-5 border-b border-gray-100 dark:border-gray-800">
+                                                        <div className="flex items-center justify-between gap-4">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                                                                    <Trophy size={20} />
+                                                                </div>
+                                                                <div>
+                                                                    <h4 className="font-extrabold text-foreground text-sm uppercase tracking-tight">{result.event}</h4>
+                                                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{result.category} Category</p>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div className="text-right">
-                                                            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                                                                #{result.rank}
-                                                            </div>
+                                                            <Award className="text-pink-500/30" size={24} />
                                                         </div>
                                                     </div>
 
-                                                    {/* Poster Display */}
-                                                    {result.poster && (
-                                                        <div className="mt-4 pt-4 border-t border-border/50">
-                                                            <div className="flex items-center justify-between mb-2">
-                                                                <span className="text-xs font-medium flex items-center gap-1 text-muted-foreground">
-                                                                    <ImageIcon size={12} />
-                                                                    Result Poster
-                                                                </span>
-                                                                <a
-                                                                    href={result.poster}
-                                                                    download
-                                                                    className="inline-flex items-center gap-1 text-xs font-medium text-purple-600 hover:text-purple-700"
-                                                                >
-                                                                    <Download size={12} />
-                                                                    Download
-                                                                </a>
+                                                    {/* Card Content - Winners List */}
+                                                    <div className="p-5 space-y-3">
+                                                        {result.winners.sort((a, b) => a.rank - b.rank).map((winner, idx) => (
+                                                            <div key={idx} className="flex items-center gap-4 bg-gray-50 dark:bg-black/20 p-3 rounded-2xl border border-gray-100 dark:border-gray-800/50">
+                                                                <div className={cn(
+                                                                    "w-10 h-10 rounded-full flex items-center justify-center text-xl shadow-lg ring-2 ring-white dark:ring-gray-800",
+                                                                    getRankColor(winner.rank)
+                                                                )}>
+                                                                    {getRankEmoji(winner.rank)}
+                                                                </div>
+                                                                <div className="flex-1 min-w-0">
+                                                                    <p className="font-bold text-gray-800 dark:text-gray-100 truncate">{winner.studentName}</p>
+                                                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">
+                                                                        {winner.rank === 1 ? 'First Place' : winner.rank === 2 ? 'Second Place' : winner.rank === 3 ? 'Third Place' : `${winner.rank}th Place`}
+                                                                    </p>
+                                                                </div>
                                                             </div>
-                                                            <div className="relative w-full h-32 rounded-lg overflow-hidden bg-secondary">
-                                                                <Image
-                                                                    src={result.poster}
-                                                                    alt="Result Poster"
-                                                                    fill
-                                                                    className="object-cover cursor-pointer hover:scale-105 transition-transform"
-                                                                    onClick={() => window.open(result.poster, '_blank')}
-                                                                />
+                                                        ))}
+                                                    </div>
+
+                                                    {/* Card Footer - Poster Preview */}
+                                                    {/* Card Footer - Poster Preview */}
+                                                    {(result.posters && result.posters.length > 0) ? (
+                                                        <div className="px-5 pb-5">
+                                                            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x">
+                                                                {result.posters.map((posterUrl, pIdx) => (
+                                                                    <div key={pIdx} className="snap-center shrink-0 w-48 relative group/poster cursor-pointer" onClick={() => window.open(posterUrl, '_blank')}>
+                                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover/poster:opacity-100 transition-opacity z-10 flex items-end justify-center p-4">
+                                                                            <Button variant="secondary" size="sm" className="rounded-full font-bold text-[10px] h-7">
+                                                                                View
+                                                                            </Button>
+                                                                        </div>
+                                                                        <div className="relative w-full aspect-[4/5] rounded-xl overflow-hidden shadow-inner bg-gray-100 dark:bg-gray-800 border border-gray-100 dark:border-gray-800">
+                                                                            <Image src={posterUrl} alt={`Poster ${pIdx + 1}`} fill className="object-cover group-hover/poster:scale-105 transition-transform duration-700" />
+                                                                        </div>
+                                                                        <div className="absolute top-2 left-2 bg-black/50 text-white text-[8px] px-2 py-0.5 rounded-full font-bold backdrop-blur-md">
+                                                                            {pIdx === 0 ? "1st" : pIdx === 1 ? "2nd" : "3rd"}
+                                                                        </div>
+                                                                        <div className="absolute top-2 right-2 z-20">
+                                                                            <a
+                                                                                href={posterUrl}
+                                                                                download
+                                                                                className="w-6 h-6 rounded-full bg-white/90 dark:bg-black/90 flex items-center justify-center text-gray-800 dark:text-white shadow-lg backdrop-blur-sm"
+                                                                                onClick={(e) => e.stopPropagation()}
+                                                                            >
+                                                                                <Download size={10} />
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
                                                             </div>
                                                         </div>
-                                                    )}
+                                                    ) : result.poster ? (
+                                                        <div className="px-5 pb-5">
+                                                            <div className="relative group/poster cursor-pointer" onClick={() => window.open(result.poster, '_blank')}>
+                                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover/poster:opacity-100 transition-opacity z-10 flex items-end justify-center p-4">
+                                                                    <Button variant="secondary" size="sm" className="rounded-full font-bold">
+                                                                        View Poster
+                                                                    </Button>
+                                                                </div>
+                                                                <div className="relative w-full h-48 rounded-2xl overflow-hidden shadow-inner bg-gray-100 dark:bg-gray-800 border border-gray-100 dark:border-gray-800">
+                                                                    <Image src={result.poster} alt="Result Poster" fill className="object-cover group-hover/poster:scale-105 transition-transform duration-700" />
+                                                                </div>
+                                                                <div className="absolute top-3 right-3 z-20">
+                                                                    <a
+                                                                        href={result.poster}
+                                                                        download
+                                                                        className="w-8 h-8 rounded-full bg-white/90 dark:bg-black/90 flex items-center justify-center text-gray-800 dark:text-white shadow-lg backdrop-blur-sm"
+                                                                        onClick={(e) => e.stopPropagation()}
+                                                                    >
+                                                                        <Download size={14} />
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ) : null}
                                                 </motion.div>
                                             ))}
                                         </div>
@@ -402,59 +424,59 @@ export function InstagramResultsBot() {
                             animate={{ opacity: 1, y: 0 }}
                             className="flex justify-start"
                         >
-                            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-3xl rounded-bl-md px-5 py-3 shadow-lg">
-                                <div className="flex gap-1">
-                                    <motion.div
-                                        animate={{ scale: [1, 1.2, 1] }}
-                                        transition={{ repeat: Infinity, duration: 0.6, delay: 0 }}
-                                        className="w-2 h-2 bg-purple-500 rounded-full"
-                                    />
-                                    <motion.div
-                                        animate={{ scale: [1, 1.2, 1] }}
-                                        transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }}
-                                        className="w-2 h-2 bg-pink-500 rounded-full"
-                                    />
-                                    <motion.div
-                                        animate={{ scale: [1, 1.2, 1] }}
-                                        transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }}
-                                        className="w-2 h-2 bg-orange-500 rounded-full"
-                                    />
+                            <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-3xl rounded-bl-sm px-6 py-4 shadow-md">
+                                <div className="flex gap-1.5">
+                                    {[0, 1, 2].map((i) => (
+                                        <motion.div
+                                            key={i}
+                                            animate={{ y: [0, -6, 0] }}
+                                            transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.15 }}
+                                            className={cn(
+                                                "w-2.5 h-2.5 rounded-full",
+                                                i === 0 ? "bg-purple-500" : i === 1 ? "bg-pink-500" : "bg-orange-500"
+                                            )}
+                                        />
+                                    ))}
                                 </div>
                             </div>
                         </motion.div>
                     )}
 
-                    <div ref={messagesEndRef} />
+                    <div ref={messagesEndRef} className="h-4" />
                 </div>
 
                 {/* Input Area - Instagram Style */}
-                <div className="border-t border-border/50 bg-white dark:bg-gray-900 p-4">
+                <div className="border-t border-gray-100 dark:border-gray-900 bg-white dark:bg-[#0A0A0A] p-5">
                     <div className="flex items-center gap-3">
-                        <div className="flex-1 relative">
+                        <div className="flex-1 relative group">
                             <Input
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                                placeholder="Search for student name..."
-                                className="rounded-full border-2 border-purple-500/30 focus:border-purple-500 pl-12 pr-4 py-6 bg-gray-50 dark:bg-gray-800"
+                                placeholder="Search student name or event..."
+                                className="rounded-full border-2 border-gray-100 dark:border-gray-800 focus:border-purple-500 dark:focus:border-purple-500 pl-14 pr-4 h-16 bg-gray-50 dark:bg-black/40 text-[0.95rem] font-medium transition-all"
                             />
                             <Search
-                                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
-                                size={20}
+                                className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-500 transition-colors"
+                                size={22}
                             />
                         </div>
-                        <Button
-                            onClick={handleSendMessage}
-                            disabled={!inputValue.trim()}
-                            size="lg"
-                            className="rounded-full w-12 h-12 p-0 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg"
-                        >
-                            <Send size={20} />
-                        </Button>
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            <Button
+                                onClick={handleSendMessage}
+                                disabled={!inputValue.trim()}
+                                className="rounded-full w-14 h-14 p-0 bg-gradient-to-r from-purple-600 to-pink-500 hover:shadow-lg shadow-purple-500/20"
+                            >
+                                <Send size={22} />
+                            </Button>
+                        </motion.div>
                     </div>
-                    <p className="text-xs text-center text-muted-foreground mt-3">
-                        Powered by Optimus Arts Fest • Results updated in real-time
-                    </p>
+                    <div className="flex items-center justify-center gap-2 mt-4 opacity-40">
+                        <User size={10} className="text-gray-400" />
+                        <p className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-gray-400">
+                            Official Optimus Arts Fest Results Bot
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

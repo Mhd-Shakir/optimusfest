@@ -1,11 +1,13 @@
 import mongoose, { Schema, Document } from "mongoose"
 
 export interface IResult extends Document {
-    studentName: string
     event: string
     category: string
-    rank: number
-    score?: number
+    winners: {
+        rank: number
+        studentName: string
+    }[]
+    posters?: string[]
     poster?: string
     createdAt: Date
     updatedAt: Date
@@ -13,11 +15,15 @@ export interface IResult extends Document {
 
 const ResultSchema = new Schema<IResult>(
     {
-        studentName: { type: String, required: true },
         event: { type: String, required: true },
         category: { type: String, required: true },
-        rank: { type: Number, required: true },
-        score: { type: Number },
+        winners: [
+            {
+                rank: { type: Number, required: true },
+                studentName: { type: String, required: true },
+            }
+        ],
+        posters: { type: [String] },
         poster: { type: String },
     },
     { timestamps: true }

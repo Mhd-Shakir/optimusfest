@@ -14,16 +14,16 @@ export async function GET() {
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json()
-        const { studentName, event, category, rank, score, poster } = body
+        const { event, category, winners, poster, posters } = body
 
-        if (!studentName || !event || !category || !rank) {
+        if (!event || !category || !winners || !Array.isArray(winners)) {
             return NextResponse.json(
-                { error: "Missing required fields: studentName, event, category, rank" },
+                { error: "Missing required fields: event, category, winners (array)" },
                 { status: 400 }
             )
         }
 
-        const newResult = await addResult({ studentName, event, category, rank, score, poster })
+        const newResult = await addResult({ event, category, winners, poster, posters })
         return NextResponse.json(newResult, { status: 201 })
     } catch (error) {
         console.error("Error creating result:", error)

@@ -4,12 +4,13 @@ import Testimonial from "@/lib/models/Testimonial"
 
 export async function PUT(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params
         const body = await request.json()
         await dbConnect()
-        const testimonial = await Testimonial.findByIdAndUpdate(params.id, body, { new: true })
+        const testimonial = await Testimonial.findByIdAndUpdate(id, body, { new: true })
         if (!testimonial) {
             return NextResponse.json({ error: "Testimonial not found" }, { status: 404 })
         }
@@ -21,11 +22,12 @@ export async function PUT(
 
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params
         await dbConnect()
-        const testimonial = await Testimonial.findByIdAndDelete(params.id)
+        const testimonial = await Testimonial.findByIdAndDelete(id)
         if (!testimonial) {
             return NextResponse.json({ error: "Testimonial not found" }, { status: 404 })
         }
