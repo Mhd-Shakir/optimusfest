@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { InstagramResultsBot } from "@/components/instagram-results-bot"
+import { GeminiResultsInterface } from "@/components/instagram-results-bot"
 import { siteConfig, breadcrumbSchema } from "@/lib/seo-config"
 import { Sparkles, Trophy } from "lucide-react"
 
@@ -54,8 +54,8 @@ export default function ResultsPage() {
             </div>
           </div>
 
-          {/* New Instagram Style Results Interface */}
-          <InstagramResultsBot />
+          {/* New Gemini Style Results Interface */}
+          <GeminiResultsInterface />
         </div>
       </div>
       <Footer />

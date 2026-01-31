@@ -64,15 +64,7 @@ export const metadata: Metadata = {
     images: [siteConfig.ogImage],
     creator: "@optimusartsfest", // Update with actual Twitter handle
   },
-  icons: {
-    icon: [
-      { url: "/icon-light-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/icon-dark-32x32.png", sizes: "32x32", type: "image/png", media: "(prefers-color-scheme: dark)" },
-    ],
-    apple: [
-      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
-    ],
-  },
+
   manifest: "/manifest.json",
   alternates: {
     canonical: siteConfig.url,

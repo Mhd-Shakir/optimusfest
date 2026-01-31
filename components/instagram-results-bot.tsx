@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Send, Trophy, Award, Sparkles, ChevronRight, Search, Download, ImageIcon, User } from "lucide-react"
+import { Send, Trophy, Sparkles, Search, Download, ArrowRight, Grid3X3, Clock, Compass, Image as ImageIcon, Mic, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -13,7 +13,7 @@ type Message = {
     type: "bot" | "user"
     content: string
     timestamp: Date
-    options?: Array<{ id: string; label: string; icon?: React.ReactNode }>
+    eventsList?: string[]
     results?: Array<{
         _id: string
         event: string
@@ -27,13 +27,20 @@ type Message = {
     }>
 }
 
-const categories = ["Alpha", "Beta", "Omega", "General-A", "General-B"]
+const categories = [
+    { id: "Alpha", label: "Alpha", icon: Compass },
+    { id: "Beta", label: "Beta", icon: Trophy },
+    { id: "Omega", label: "Omega", icon: Sparkles },
+    { id: "General-A", label: "General A", icon: Grid3X3 },
+    { id: "General-B", label: "General B", icon: Clock },
+]
 
-export function InstagramResultsBot() {
+export function GeminiResultsInterface() {
     const [messages, setMessages] = useState<Message[]>([])
     const [inputValue, setInputValue] = useState("")
     const [isTyping, setIsTyping] = useState(false)
     const messagesEndRef = useRef<HTMLDivElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -43,28 +50,14 @@ export function InstagramResultsBot() {
         scrollToBottom()
     }, [messages, isTyping])
 
-    useEffect(() => {
-        // Welcome message
-        setTimeout(() => {
-            addBotMessage(
-                "Hey! 👋 Welcome to Optimus Results Bot\n\nI can help you find competition results! What would you like to do?",
-                [
-                    { id: "search", label: "🔍 Search by Name" },
-                    { id: "category", label: "📂 Browse by Category" },
-                    { id: "all", label: "🏆 View All Results" },
-                ]
-            )
-        }, 500)
-    }, [])
-
-    const addBotMessage = (content: string, options?: Message["options"], results?: Message["results"]) => {
+    const addBotMessage = (content: string, results?: Message["results"], eventsList?: string[]) => {
         const newMessage: Message = {
             id: Date.now().toString(),
             type: "bot",
             content,
             timestamp: new Date(),
-            options,
             results,
+            eventsList,
         }
         setMessages((prev) => [...prev, newMessage])
     }
@@ -90,106 +83,64 @@ export function InstagramResultsBot() {
         }
     }
 
-    const handleOptionClick = async (optionId: string) => {
-        if (optionId === "search") {
-            addUserMessage("🔍 Search by Name")
-            setIsTyping(true)
-            setTimeout(() => {
-                setIsTyping(false)
-                addBotMessage("Type the student name to search for results 👇")
-            }, 800)
-        } else if (optionId === "category") {
-            addUserMessage("📂 Browse by Category")
-            setIsTyping(true)
-            setTimeout(() => {
-                setIsTyping(false)
-                addBotMessage(
-                    "Select a category:",
-                    categories.map((cat) => ({ id: `cat-${cat}`, label: cat }))
-                )
-            }, 800)
-        } else if (optionId === "all") {
-            addUserMessage("🏆 View All Results")
-            setIsTyping(true)
-            const results = await fetchResults("/api/results")
-            setTimeout(() => {
-                setIsTyping(false)
-                if (results.length === 0) {
-                    addBotMessage("No results found yet! 😔\n\nCheck back later once results are announced.")
-                } else {
-                    addBotMessage(`Found results for ${results.length} events! 🎉`, undefined, results)
-                }
-                setTimeout(() => {
-                    addBotMessage("What else can I help you with?", [
-                        { id: "search", label: "🔍 Search Again" },
-                        { id: "category", label: "📂 Browse Categories" },
-                    ])
-                }, 1000)
-            }, 1000)
-        } else if (optionId.startsWith("cat-")) {
-            const category = optionId.replace("cat-", "")
-            addUserMessage(category)
-            setIsTyping(true)
-            const results = await fetchResults(`/api/results?category=${encodeURIComponent(category)}`)
-            setTimeout(() => {
-                setIsTyping(false)
-                if (results.length === 0) {
-                    addBotMessage(`No results found in ${category} category yet! 😔`)
-                } else {
-                    addBotMessage(`Here are the results for ${category} category! 🎯`, undefined, results)
-                }
-                setTimeout(() => {
-                    addBotMessage("Want to check another category?", [
-                        { id: "category", label: "📂 Browse Categories" },
-                        { id: "search", label: "🔍 Search by Name" },
-                    ])
-                }, 1000)
-            }, 1000)
-        } else if (optionId === "back") {
-            addUserMessage("🔙 Back to Start")
-            setIsTyping(true)
-            setTimeout(() => {
-                setIsTyping(false)
-                addBotMessage("What would you like to do?", [
-                    { id: "search", label: "🔍 Search by Name" },
-                    { id: "category", label: "📂 Browse by Category" },
-                    { id: "all", label: "🏆 View All Results" },
-                ])
-            }, 500)
-        }
-    }
+    const handleSearch = async (query: string, type: 'text' | 'category' | 'event' = 'text') => {
+        if (!query.trim()) return
 
-    const handleSendMessage = async () => {
-        if (!inputValue.trim()) return
-
-        const query = inputValue.trim()
         addUserMessage(query)
         setInputValue("")
         setIsTyping(true)
 
-        const results = await fetchResults(`/api/results?search=${encodeURIComponent(query)}`)
+        // Determine if it's a category search or text search
+        let endpoint = `/api/results?search=${encodeURIComponent(query)}`
+
+        // If it's a category search (either explicit type or detected)
+        let isCategorySearch = type === 'category'
+        if (type === 'text') {
+            const categoryMatch = categories.find(c => c.id.toLowerCase() === query.toLowerCase() || c.label.toLowerCase() === query.toLowerCase())
+            if (categoryMatch) {
+                endpoint = `/api/results?category=${encodeURIComponent(categoryMatch.id)}`
+                isCategorySearch = true
+                query = categoryMatch.label // Normalize query to label for nicer display
+            }
+        } else if (type === 'category') {
+            const categoryMatch = categories.find(c => c.id === query)
+            endpoint = `/api/results?category=${encodeURIComponent(categoryMatch?.id || query)}`
+            if (categoryMatch) query = categoryMatch.label
+        }
+
+
+        const results = await fetchResults(endpoint)
 
         setTimeout(() => {
             setIsTyping(false)
             if (results.length === 0) {
-                addBotMessage(`Couldn't find any results for "${query}" 😔\n\nTry searching with a different name or browse by category!`, [
-                    { id: "search", label: "🔍 Search Again" },
-                    { id: "category", label: "📂 Browse Categories" },
-                ])
+                addBotMessage(`I couldn't find any results for "${query}". \nTry checking the spelling or browse by category.`)
             } else {
-                addBotMessage(
-                    `Found ${results.length} event${results.length > 1 ? "s" : ""} matching "${query}"! 🎉`,
-                    undefined,
-                    results
-                )
-                setTimeout(() => {
-                    addBotMessage("What else can I help you with?", [
-                        { id: "search", label: "🔍 Search Again" },
-                        { id: "category", label: "📂 Browse Categories" },
-                    ])
-                }, 1000)
+                if (isCategorySearch) {
+                    // Extract unique event names
+                    const eventNames = Array.from(new Set(results.map((r: any) => r.event))) as string[]
+                    addBotMessage(
+                        `I found ${eventNames.length} events in ${query}. Which one would you like to check?`,
+                        undefined, // Don't show results yet
+                        eventNames // Show event list
+                    )
+                } else {
+                    // Show actual results (Event Detail)
+                    addBotMessage(
+                        `Here are the results for "${results[0]?.event || query}"`,
+                        results
+                    )
+                }
             }
-        }, 1000)
+        }, 800)
+    }
+
+    const handleCategoryClick = (categoryId: string) => {
+        handleSearch(categoryId, 'category')
+    }
+
+    const handleEventClick = (eventName: string) => {
+        handleSearch(eventName, 'event')
     }
 
     const getRankEmoji = (rank: number) => {
@@ -201,282 +152,271 @@ export function InstagramResultsBot() {
         }
     }
 
-    const getRankColor = (rank: number) => {
-        switch (rank) {
-            case 1: return "from-yellow-400 to-yellow-600"
-            case 2: return "from-gray-300 to-gray-500"
-            case 3: return "from-orange-400 to-orange-600"
-            default: return "from-blue-400 to-blue-600"
-        }
+    const handleReset = () => {
+        setMessages([])
+        setInputValue("")
+        setIsTyping(false)
     }
 
+    const isHome = messages.length === 0
+
     return (
-        <div className="max-w-2xl mx-auto">
-            {/* Instagram-style Chat Container */}
-            <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 ring-1 ring-white/20">
-                {/* Gradient Header - Instagram Style */}
-                <div className="relative bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 p-6 overflow-hidden">
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20" />
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full -mr-16 -mt-16" />
 
-                    <div className="relative flex items-center gap-4">
-                        <div className="relative">
-                            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-white to-gray-200 p-1 shadow-xl">
-                                <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center">
-                                    <Trophy className="text-white" size={28} />
-                                </div>
-                            </div>
-                            <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full shadow-sm" />
-                        </div>
-                        <div className="flex-1">
-                            <h3 className="font-extrabold text-white text-xl tracking-tight flex items-center gap-2">
-                                Optimus Results Bot
-                                <Sparkles size={16} className="text-yellow-300 animate-pulse" />
-                            </h3>
-                            <div className="flex items-center gap-1.5">
-                                <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                                <p className="text-white/80 text-xs font-medium uppercase tracking-widest">Active Now</p>
-                            </div>
-                        </div>
-                    </div>
+        <div className="w-full max-w-3xl mx-auto h-[600px] flex flex-col font-sans bg-white dark:bg-[#0E0E0E] border border-gray-200 dark:border-gray-800 shadow-2xl rounded-[32px] relative overflow-hidden ring-4 ring-gray-50 dark:ring-gray-900/50">
+
+            {/* Back Button */}
+            {!isHome && (
+                <div className="absolute top-6 left-6 z-50">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleReset}
+                        className="rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md hover:bg-white dark:hover:bg-black border border-gray-200 dark:border-gray-800 shadow-sm transition-all"
+                    >
+                        <ArrowLeft size={20} className="text-gray-700 dark:text-gray-200" />
+                    </Button>
                 </div>
+            )}
 
-                {/* Messages Area - Instagram Style */}
-                <div className="h-[650px] overflow-y-auto bg-[#FAFAFA] dark:bg-[#0A0A0A] p-6 space-y-6 scrollbar-hide">
-                    <AnimatePresence>
+            {/* Main Content Area */}
+            <div className={cn("flex-1 overflow-y-auto scrollbar-hide flex flex-col", isHome ? "justify-center items-center pb-20" : "justify-between pb-24")}>
+
+                {/* Home Screen Greeting */}
+                {isHome && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-start w-full px-8 mb-12"
+                        >
+                            <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#4285F4] via-[#9B72CB] to-[#D96570] leading-tight tracking-tight mb-2">
+                                Hello there
+                            </h1>
+                            <h2 className="text-2xl md:text-3xl font-medium text-[#C4C7C5] dark:text-[#444746]">
+                                How can I help today?
+                            </h2>
+                        </motion.div>
+
+                        {/* Suggestion Cards (Gemini Style) */}
+                        <div
+                            className="flex gap-3 mb-8 px-6 w-fit max-w-full mx-auto overflow-x-auto scrollbar-none mask-linear"
+                            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                        >
+                            {categories.map((cat, idx) => (
+                                <motion.button
+                                    key={cat.id}
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: idx * 0.1 }}
+                                    onClick={() => handleCategoryClick(cat.id)}
+                                    className="h-12 min-w-[140px] shrink-0 p-3 rounded-xl bg-[#F0F4F9] dark:bg-[#1E1F20] hover:bg-[#E1E5EA] dark:hover:bg-[#333537] text-left flex items-center justify-between transition-colors group relative overflow-hidden border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
+                                >
+                                    <span className="text-xs font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                                        {cat.label}
+                                    </span>
+                                    <div className="bg-white dark:bg-black/20 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <ArrowRight size={10} />
+                                    </div>
+                                </motion.button>
+                            ))}
+                        </div>
+                    </>
+                )}
+
+                {/* Chat History (Results) */}
+                {!isHome && (
+                    <div className="w-full max-w-4xl mx-auto px-4 py-8 space-y-8 pb-32">
                         {messages.map((message) => (
                             <motion.div
                                 key={message.id}
-                                initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                transition={{ duration: 0.4, ease: "easeOut" }}
-                                className={cn("flex", message.type === "user" ? "justify-end" : "justify-start")}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className={cn("flex flex-col gap-4", message.type === "user" ? "items-end" : "items-start")}
                             >
-                                <div className={cn("max-w-[90%] space-y-3")}>
-                                    {/* Message Bubble */}
-                                    <div
-                                        className={cn(
-                                            "rounded-[1.75rem] px-6 py-4 shadow-md",
-                                            message.type === "user"
-                                                ? "bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-br-sm ml-auto"
-                                                : "bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-bl-sm"
-                                        )}
-                                    >
-                                        <p
-                                            className={cn(
-                                                "whitespace-pre-line text-[0.95rem] leading-relaxed font-medium",
-                                                message.type === "bot" ? "text-gray-800 dark:text-gray-100" : "text-white"
-                                            )}
-                                        >
-                                            {message.content}
-                                        </p>
-                                        <p
-                                            className={cn(
-                                                "text-[0.65rem] mt-2 font-bold uppercase tracking-wider opacity-60",
-                                                message.type === "user" ? "text-white" : "text-gray-400"
-                                            )}
-                                        >
-                                            {message.timestamp.toLocaleTimeString([], {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}
-                                        </p>
-                                    </div>
+                                {/* User Query Bubble (Minimal) */}
+                                {message.type === "user" && (
+                                    <h3 className="text-2xl md:text-3xl font-medium text-gray-800 dark:text-gray-200">
+                                        {message.content}
+                                    </h3>
+                                )}
 
-                                    {/* Options */}
-                                    {message.options && (
-                                        <div className="grid grid-cols-1 gap-2">
-                                            {message.options.map((option) => (
-                                                <motion.button
-                                                    key={option.id}
-                                                    whileHover={{ scale: 1.02, x: 5 }}
-                                                    whileTap={{ scale: 0.98 }}
-                                                    onClick={() => handleOptionClick(option.id)}
-                                                    className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-purple-300 dark:hover:border-purple-900 hover:bg-purple-50/50 dark:hover:bg-purple-900/10 rounded-2xl p-4 text-left transition-all duration-300 group shadow-sm flex items-center justify-between"
-                                                >
-                                                    <span className="font-bold text-gray-700 dark:text-gray-200 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                                                        {option.label}
-                                                    </span>
-                                                    <ChevronRight
-                                                        className="text-purple-400 group-hover:text-purple-600 dark:group-hover:text-purple-400"
-                                                        size={18}
-                                                    />
-                                                </motion.button>
-                                            ))}
+                                {/* Bot Response */}
+                                {message.type === "bot" && (
+                                    <div className="w-full space-y-6">
+                                        <div className="flex items-start gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center shrink-0 mt-1">
+                                                <Sparkles className="text-white" size={14} />
+                                            </div>
+                                            <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed pt-1">
+                                                {message.content}
+                                            </p>
                                         </div>
-                                    )}
 
-                                    {/* Results Display */}
-                                    {message.results && (
-                                        <div className="space-y-4 pt-2">
-                                            {message.results.map((result) => (
-                                                <motion.div
-                                                    key={result._id}
-                                                    initial={{ opacity: 0, scale: 0.9 }}
-                                                    animate={{ opacity: 1, scale: 1 }}
-                                                    className="bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-xl border border-gray-100 dark:border-gray-800"
-                                                >
-                                                    {/* Card Header */}
-                                                    <div className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800/50 dark:to-gray-900 p-5 border-b border-gray-100 dark:border-gray-800">
-                                                        <div className="flex items-center justify-between gap-4">
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
-                                                                    <Trophy size={20} />
-                                                                </div>
+                                        {/* Event List (Category View) */}
+                                        {message.eventsList && (
+                                            <div className="flex flex-wrap gap-2 pl-0 md:pl-11">
+                                                {message.eventsList.map((eventName, idx) => (
+                                                    <motion.button
+                                                        key={idx}
+                                                        initial={{ opacity: 0, scale: 0.9 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        transition={{ delay: idx * 0.05 }}
+                                                        onClick={() => handleEventClick(eventName)}
+                                                        className="px-4 py-2 bg-white dark:bg-[#1E1F20] border border-gray-200 dark:border-gray-700 hover:border-purple-400 dark:hover:border-purple-500 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 transition-colors shadow-sm hover:shadow"
+                                                    >
+                                                        {eventName}
+                                                    </motion.button>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {/* Results Grid (Event Detail View) */}
+                                        {message.results && (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-0 md:pl-11">
+                                                {message.results.map((result) => (
+                                                    <motion.div
+                                                        key={result._id}
+                                                        initial={{ opacity: 0, scale: 0.95 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow"
+                                                    >
+                                                        <div className="p-5">
+                                                            <div className="flex justify-between items-start mb-4">
                                                                 <div>
-                                                                    <h4 className="font-extrabold text-foreground text-sm uppercase tracking-tight">{result.event}</h4>
-                                                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{result.category} Category</p>
+                                                                    <h4 className="font-bold text-gray-900 dark:text-gray-100">{result.event}</h4>
+                                                                    <span className="text-xs font-medium text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30 px-2 py-0.5 rounded-full mt-1 inline-block">
+                                                                        {result.category}
+                                                                    </span>
                                                                 </div>
+                                                                {result.poster && (
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="icon"
+                                                                        onClick={() => window.open(result.poster, '_blank')}
+                                                                        className="text-gray-400 hover:text-purple-600"
+                                                                    >
+                                                                        <Download size={18} />
+                                                                    </Button>
+                                                                )}
                                                             </div>
-                                                            <Award className="text-pink-500/30" size={24} />
-                                                        </div>
-                                                    </div>
 
-                                                    {/* Card Content - Winners List */}
-                                                    <div className="p-5 space-y-3">
-                                                        {result.winners.sort((a, b) => a.rank - b.rank).map((winner, idx) => (
-                                                            <div key={idx} className="flex items-center gap-4 bg-gray-50 dark:bg-black/20 p-3 rounded-2xl border border-gray-100 dark:border-gray-800/50">
-                                                                <div className={cn(
-                                                                    "w-10 h-10 rounded-full flex items-center justify-center text-xl shadow-lg ring-2 ring-white dark:ring-gray-800",
-                                                                    getRankColor(winner.rank)
-                                                                )}>
-                                                                    {getRankEmoji(winner.rank)}
-                                                                </div>
-                                                                <div className="flex-1 min-w-0">
-                                                                    <p className="font-bold text-gray-800 dark:text-gray-100 truncate">{winner.studentName}</p>
-                                                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">
-                                                                        {winner.rank === 1 ? 'First Place' : winner.rank === 2 ? 'Second Place' : winner.rank === 3 ? 'Third Place' : `${winner.rank}th Place`}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-
-                                                    {/* Card Footer - Poster Preview */}
-                                                    {/* Card Footer - Poster Preview */}
-                                                    {(result.posters && result.posters.length > 0) ? (
-                                                        <div className="px-5 pb-5">
-                                                            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x">
-                                                                {result.posters.map((posterUrl, pIdx) => (
-                                                                    <div key={pIdx} className="snap-center shrink-0 w-48 relative group/poster cursor-pointer" onClick={() => window.open(posterUrl, '_blank')}>
-                                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover/poster:opacity-100 transition-opacity z-10 flex items-end justify-center p-4">
-                                                                            <Button variant="secondary" size="sm" className="rounded-full font-bold text-[10px] h-7">
-                                                                                View
-                                                                            </Button>
-                                                                        </div>
-                                                                        <div className="relative w-full aspect-[4/5] rounded-xl overflow-hidden shadow-inner bg-gray-100 dark:bg-gray-800 border border-gray-100 dark:border-gray-800">
-                                                                            <Image src={posterUrl} alt={`Poster ${pIdx + 1}`} fill className="object-cover group-hover/poster:scale-105 transition-transform duration-700" />
-                                                                        </div>
-                                                                        <div className="absolute top-2 left-2 bg-black/50 text-white text-[8px] px-2 py-0.5 rounded-full font-bold backdrop-blur-md">
-                                                                            {pIdx === 0 ? "1st" : pIdx === 1 ? "2nd" : "3rd"}
-                                                                        </div>
-                                                                        <div className="absolute top-2 right-2 z-20">
-                                                                            <a
-                                                                                href={posterUrl}
-                                                                                download
-                                                                                className="w-6 h-6 rounded-full bg-white/90 dark:bg-black/90 flex items-center justify-center text-gray-800 dark:text-white shadow-lg backdrop-blur-sm"
-                                                                                onClick={(e) => e.stopPropagation()}
-                                                                            >
-                                                                                <Download size={10} />
-                                                                            </a>
+                                                            <div className="space-y-2">
+                                                                {result.winners.sort((a, b) => a.rank - b.rank).map((winner, idx) => (
+                                                                    <div key={idx} className="flex items-center gap-3">
+                                                                        <span className="text-lg">{getRankEmoji(winner.rank)}</span>
+                                                                        <div className="flex-1 min-w-0">
+                                                                            <p className="font-medium text-sm text-gray-700 dark:text-gray-300 truncate">
+                                                                                {winner.studentName}
+                                                                            </p>
                                                                         </div>
                                                                     </div>
                                                                 ))}
                                                             </div>
+
+                                                            {/* Posters Grid */}
+                                                            {result.posters && result.posters.length > 0 ? (
+                                                                <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                                                                    {result.posters.map((posterUrl, pIdx) => (
+                                                                        <div key={pIdx} className="relative aspect-[4/5] rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 group">
+                                                                            <img src={posterUrl} alt={`Poster ${pIdx + 1}`} className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" />
+                                                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                                                                            <Button
+                                                                                variant="secondary"
+                                                                                size="icon"
+                                                                                className="absolute bottom-2 right-2 h-8 w-8 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0"
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    window.open(posterUrl, '_blank');
+                                                                                }}
+                                                                            >
+                                                                                <Download size={14} />
+                                                                            </Button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            ) : result.poster ? (
+                                                                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                                                                    <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 group">
+                                                                        <img src={result.poster} alt="Event Poster" className="object-cover w-full h-full" />
+                                                                        <Button
+                                                                            variant="secondary"
+                                                                            size="icon"
+                                                                            className="absolute bottom-3 right-3 h-10 w-10 rounded-full shadow-xl"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                window.open(result.poster, '_blank');
+                                                                            }}
+                                                                        >
+                                                                            <Download size={18} />
+                                                                        </Button>
+                                                                    </div>
+                                                                </div>
+                                                            ) : null}
                                                         </div>
-                                                    ) : result.poster ? (
-                                                        <div className="px-5 pb-5">
-                                                            <div className="relative group/poster cursor-pointer" onClick={() => window.open(result.poster, '_blank')}>
-                                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover/poster:opacity-100 transition-opacity z-10 flex items-end justify-center p-4">
-                                                                    <Button variant="secondary" size="sm" className="rounded-full font-bold">
-                                                                        View Poster
-                                                                    </Button>
-                                                                </div>
-                                                                <div className="relative w-full h-48 rounded-2xl overflow-hidden shadow-inner bg-gray-100 dark:bg-gray-800 border border-gray-100 dark:border-gray-800">
-                                                                    <Image src={result.poster} alt="Result Poster" fill className="object-cover group-hover/poster:scale-105 transition-transform duration-700" />
-                                                                </div>
-                                                                <div className="absolute top-3 right-3 z-20">
-                                                                    <a
-                                                                        href={result.poster}
-                                                                        download
-                                                                        className="w-8 h-8 rounded-full bg-white/90 dark:bg-black/90 flex items-center justify-center text-gray-800 dark:text-white shadow-lg backdrop-blur-sm"
-                                                                        onClick={(e) => e.stopPropagation()}
-                                                                    >
-                                                                        <Download size={14} />
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    ) : null}
-                                                </motion.div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
+                                                    </motion.div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </motion.div>
                         ))}
-                    </AnimatePresence>
 
-                    {/* Typing Indicator */}
-                    {isTyping && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="flex justify-start"
-                        >
-                            <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-3xl rounded-bl-sm px-6 py-4 shadow-md">
-                                <div className="flex gap-1.5">
-                                    {[0, 1, 2].map((i) => (
-                                        <motion.div
-                                            key={i}
-                                            animate={{ y: [0, -6, 0] }}
-                                            transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.15 }}
-                                            className={cn(
-                                                "w-2.5 h-2.5 rounded-full",
-                                                i === 0 ? "bg-purple-500" : i === 1 ? "bg-pink-500" : "bg-orange-500"
-                                            )}
-                                        />
-                                    ))}
+                        {isTyping && (
+                            <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center shrink-0">
+                                    <Sparkles className="text-white" size={14} />
+                                </div>
+                                <div className="flex gap-1 h-6 items-center">
+                                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+                                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75" />
+                                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150" />
                                 </div>
                             </div>
-                        </motion.div>
-                    )}
+                        )}
+                        <div ref={messagesEndRef} />
+                    </div>
+                )}
+            </div>
 
-                    <div ref={messagesEndRef} className="h-4" />
-                </div>
+            {/* Input Area (Absolute Bottom for Box) */}
+            < div className="absolute bottom-0 left-0 right-0 p-4 bg-white/90 dark:bg-[#0E0E0E]/90 backdrop-blur-md z-50" >
+                <div className="w-full">
+                    <div className="relative bg-[#F0F4F9] dark:bg-[#1E1F20] rounded-full flex items-center px-2 py-1.5 transition-all hover:bg-[#E1E5EA] dark:hover:bg-[#333537] ring-1 ring-transparent focus-within:ring-2 focus-within:ring-blue-100 dark:focus-within:ring-blue-900 group">
 
-                {/* Input Area - Instagram Style */}
-                <div className="border-t border-gray-100 dark:border-gray-900 bg-white dark:bg-[#0A0A0A] p-5">
-                    <div className="flex items-center gap-3">
-                        <div className="flex-1 relative group">
-                            <Input
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                                placeholder="Search student name or event..."
-                                className="rounded-full border-2 border-gray-100 dark:border-gray-800 focus:border-purple-500 dark:focus:border-purple-500 pl-14 pr-4 h-16 bg-gray-50 dark:bg-black/40 text-[0.95rem] font-medium transition-all"
-                            />
-                            <Search
-                                className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-500 transition-colors"
-                                size={22}
-                            />
-                        </div>
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Button
-                                onClick={handleSendMessage}
-                                disabled={!inputValue.trim()}
-                                className="rounded-full w-14 h-14 p-0 bg-gradient-to-r from-purple-600 to-pink-500 hover:shadow-lg shadow-purple-500/20"
-                            >
-                                <Send size={22} />
+                        {/* Left Icon (Image) */}
+                        <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 rounded-full h-9 w-9 shrink-0">
+                            <ImageIcon size={18} />
+                        </Button>
+
+                        <Input
+                            ref={inputRef}
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && handleSearch(inputValue)}
+                            placeholder={isHome ? "Search results..." : "Ask follow up..."}
+                            className="flex-1 border-0 shadow-none focus-visible:ring-0 bg-transparent text-base text-gray-800 dark:text-gray-200 h-10 px-2 placeholder:text-gray-500"
+                        />
+
+                        <div className="flex items-center gap-0.5">
+                            {/* Mic Icon */}
+                            <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 rounded-full h-9 w-9 shrink-0">
+                                <Mic size={18} />
                             </Button>
-                        </motion.div>
+
+                            {/* Send Icon */}
+                            {inputValue.trim() && (
+                                <Button
+                                    onClick={() => handleSearch(inputValue)}
+                                    size="icon"
+                                    className="bg-transparent hover:bg-gray-200 dark:hover:bg-[#444746] text-[#004A77] dark:text-[#A8C7FA] rounded-full h-9 w-9 shrink-0 transition-colors"
+                                >
+                                    <Send size={18} />
+                                </Button>
+                            )}
+                        </div>
                     </div>
-                    <div className="flex items-center justify-center gap-2 mt-4 opacity-40">
-                        <User size={10} className="text-gray-400" />
-                        <p className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-gray-400">
-                            Official Optimus Arts Fest Results Bot
-                        </p>
-                    </div>
+                    <p className="text-center text-[10px] text-gray-400 mt-2 font-medium">Optimus AI Assistant • Results 2026</p>
                 </div>
             </div>
         </div>

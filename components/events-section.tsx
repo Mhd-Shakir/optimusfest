@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from "react"
 import { motion, useInView } from "framer-motion"
-import { Calendar, Clock, MapPin, Upload } from "lucide-react"
+import { Calendar, Clock, MapPin, Upload, ArrowRight } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { EventGalleryModal } from "./event-gallery-modal"
 import { ImageWithFallback } from "@/components/ui/image-with-fallback"
@@ -82,70 +82,76 @@ export function EventsSection() {
             ))}
           </div>
         ) : (
-          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {events.map((event, index) => (
               <motion.div
                 key={event._id}
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: index * 0.15 }}
-                className="group relative"
+                className="group relative h-[400px]"
               >
                 <div
-                  className={`glass rounded-3xl overflow-hidden h-full hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 border border-transparent hover:border-primary/30 ${event.images && event.images.length > 0 ? 'cursor-pointer' : ''
+                  className={`relative w-full h-full rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 border border-transparent hover:border-primary/30 ${event.images && event.images.length > 0 ? 'cursor-pointer' : ''
                     }`}
                   onClick={() => handleEventClick(event)}
                 >
-                  {/* Image Container with Gallery */}
-                  <div className="relative h-36 md:h-48 overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5">
-                    {event.images && event.images.length > 0 ? (
-                      <div className="relative h-full">
-                        <ImageWithFallback
-                          src={event.images[0]}
-                          alt={event.title}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        {/* Image count badge */}
-                        {event.images.length > 1 && (
-                          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-sm text-white text-[10px] font-semibold">
-                            +{event.images.length - 1} photos
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
-                        <Upload size={32} className="mb-1 opacity-50" />
-                        <p className="text-xs">Photos coming soon</p>
-                      </div>
-                    )}
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                  </div>
+                  {/* Full Height Image */}
+                  {event.images && event.images.length > 0 ? (
+                    <>
+                      <ImageWithFallback
+                        src={event.images[0]}
+                        alt={event.title}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      {/* Image count badge */}
+                      {event.images.length > 1 && (
+                        <div className="absolute top-4 right-4 z-20 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-semibold border border-white/10">
+                          +{event.images.length - 1} photos
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 text-white/30">
+                      <Upload size={32} className="mb-2 opacity-50" />
+                      <p className="text-xs">Images coming soon</p>
+                    </div>
+                  )}
 
-                  {/* Content */}
-                  <div className="p-4 md:p-5">
-                    <h3 className="text-lg md:text-xl font-bold mb-2 text-foreground group-hover:text-primary transition-colors">
-                      {event.title}
-                    </h3>
-                    <p className="text-muted-foreground text-xs md:text-sm mb-4 leading-relaxed line-clamp-2">
-                      {event.description}
-                    </p>
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
 
-                    {/* Event Details */}
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
-                        <Calendar size={14} className="text-primary flex-shrink-0" />
-                        <span>{event.date}</span>
+                  {/* Content Overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6 z-10 flex flex-col justify-end h-full pointer-events-none">
+                    <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                      <h3 className="text-xl md:text-2xl font-bold mb-2 text-white group-hover:text-primary transition-colors leading-tight">
+                        {event.title}
+                      </h3>
+
+                      {/* Event Details */}
+                      <div className="flex flex-wrap gap-3 mb-3 text-xs md:text-sm text-white/80">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar size={14} className="text-primary" />
+                          <span>{event.date}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Clock size={14} className="text-primary" />
+                          <span>{event.time}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
-                        <Clock size={14} className="text-primary flex-shrink-0" />
-                        <span>{event.time}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
-                        <MapPin size={14} className="text-primary flex-shrink-0" />
-                        <span>{event.venue}</span>
-                      </div>
+
+                      <p className="text-white/70 text-xs md:text-sm mb-4 leading-relaxed line-clamp-2">
+                        {event.description}
+                      </p>
+
+                      {/* View Details Hint */}
+                      {event.images && event.images.length > 0 && (
+                        <div className="flex items-center gap-2 text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <span>View Gallery</span>
+                          <ArrowRight size={16} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

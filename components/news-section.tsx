@@ -114,8 +114,6 @@ export function NewsSection() {
                           <Tag size={32} className="text-muted-foreground opacity-30" />
                         </div>
                       )}
-                      {/* Gradient Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
                       {/* Category Badge */}
                       <div className="absolute top-3 left-3">
@@ -193,7 +191,6 @@ export function NewsSection() {
                   fill
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               </div>
             )}
 

@@ -8,7 +8,7 @@ import { EventsSection } from "@/components/events-section"
 import { NewsSection } from "@/components/news-section"
 import { TestimonialsSection } from "@/components/testimonials-section"
 import { GallerySection } from "@/components/gallery-section"
-import { ContactSection } from "@/components/contact-section"
+import { SocialConnection } from "@/components/social-connection"
 import { FAQSection } from "@/components/faq-section"
 import { Footer } from "@/components/footer"
 
@@ -60,8 +60,8 @@ export default function Home() {
           <TestimonialsSection />
         </div>
 
-        {/* Contact Section */}
-        <ContactSection />
+        {/* Social Connection Section */}
+        <SocialConnection />
 
         {/* FAQ Section */}
         <FAQSection />

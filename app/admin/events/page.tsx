@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Upload, X, Loader2, ImagePlus, Plus, Trash2, Calendar, Clock, MapPin } from "lucide-react"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -81,7 +82,7 @@ export default function AdminEventsPage() {
             const createdEvent = await response.json()
             setEvents(prev => [...prev, createdEvent])
             setIsCreateOpen(false)
-            setNewEvent({ title: "", category: "", date: "", time: "", venue: "", description: "" })
+            setNewEvent({ title: "", category: "Event", date: "", time: "", venue: "", description: "" })
             toast({
                 title: "Success",
                 description: "Event created successfully",
@@ -407,7 +408,7 @@ export default function AdminEventsPage() {
                                                         key={imgIndex}
                                                         className="group relative aspect-square rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-colors"
                                                     >
-                                                        <Image
+                                                        <ImageWithFallback
                                                             src={imageUrl}
                                                             alt={`${event.title} - Photo ${imgIndex + 1}`}
                                                             fill

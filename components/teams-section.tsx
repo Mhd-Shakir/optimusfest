@@ -15,7 +15,7 @@ const teams = [
     stats: [
       { label: "Participants", value: "45+" },
       { label: "Categories", value: "3" },
-      { label: "Events", value: "80+" },
+      { label: "Events", value: "160+" },
     ],
   },
   {
@@ -28,7 +28,7 @@ const teams = [
     stats: [
       { label: "Participants", value: "45+" },
       { label: "Categories", value: "3" },
-      { label: "Events", value: "80+" },
+      { label: "Events", value: "160+" },
     ],
   },
 ]

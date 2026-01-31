@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Plus, Edit, Trash2, Eye, EyeOff, Loader2, ImagePlus } from "lucide-react"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -299,7 +300,7 @@ export default function AdminNewsPage() {
                                         <Label>Cover Image</Label>
                                         {formData.image ? (
                                             <div className="relative w-full h-48 rounded-lg overflow-hidden border">
-                                                <Image src={formData.image} alt="Cover" fill className="object-cover" />
+                                                <ImageWithFallback src={formData.image} alt="Cover" fill className="object-cover" />
                                                 <Button
                                                     type="button"
                                                     variant="destructive"
@@ -381,7 +382,7 @@ export default function AdminNewsPage() {
                                         {/* Image */}
                                         <div className="relative w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden bg-gradient-to-br from-accent/10 to-primary/10">
                                             {article.image ? (
-                                                <Image src={article.image} alt={article.title} fill className="object-cover" />
+                                                <ImageWithFallback src={article.image} alt={article.title} fill className="object-cover" />
                                             ) : (
                                                 <div className="h-full flex items-center justify-center">
                                                     <ImagePlus className="w-8 h-8 text-muted-foreground opacity-30" />

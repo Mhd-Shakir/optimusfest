@@ -60,18 +60,16 @@ export function Header() {
       <div className="w-full">
         <div
           className={cn(
-            "glass-strong backdrop-blur-xl transition-all duration-300 rounded-full",
-            isScrolled ? "shadow-xl" : "shadow-lg"
+            "transition-all duration-300 rounded-full",
+            isScrolled ? "glass-strong backdrop-blur-xl shadow-xl" : "bg-transparent shadow-none"
           )}
         >
           <div className="flex items-center justify-between px-3 sm:px-4 md:px-5 py-2">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-              <Image src="/images/image.png" alt="Optimus Arts Fest Logo" width={32} height={32} className="rounded-lg w-7 h-7 sm:w-8 sm:h-8" />
-              <motion.div whileHover={{ scale: 1.05 }} className="text-sm sm:text-base md:text-lg font-sans font-bold tracking-tight">
-                <span className="text-foreground">OPTIMUS</span>
-                <span className="gradient-text ml-0.5 sm:ml-1">ARTS</span>
-              </motion.div>
+            <Link href="/" className="flex items-center gap-1 flex-shrink-0" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+              <Image src="/images/image.png" alt="Logo Icon" width={32} height={32} className="rounded-lg w-7 h-7 sm:w-8 sm:h-8" />
+              <Image src="/images/optimus_header_1.png" alt="Optimus Arts Fest" width={120} height={32} className="w-auto h-6 sm:h-7 object-contain" />
+
             </Link>
 
             {/* Desktop Navigation */}
@@ -84,8 +82,8 @@ export function Header() {
                   className={cn(
                     "px-3 py-1.5 text-xs font-medium transition-all duration-300 relative rounded-full",
                     isActive(item.href)
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                      ? (isScrolled ? "text-primary bg-primary/10" : "text-white bg-white/20")
+                      : (isScrolled ? "text-muted-foreground hover:text-foreground hover:bg-secondary/50" : "text-white/80 hover:text-white hover:bg-white/10")
                   )}
                 >
                   {item.name}
@@ -100,8 +98,8 @@ export function Header() {
                   className={cn(
                     "px-3 py-1.5 text-xs font-medium transition-all duration-300 rounded-full flex items-center gap-0.5",
                     isDropdownOpen || moreItems.some(item => isActive(item.href))
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                      ? (isScrolled ? "text-primary bg-primary/10" : "text-white bg-white/20")
+                      : (isScrolled ? "text-muted-foreground hover:text-foreground hover:bg-secondary/50" : "text-white/80 hover:text-white hover:bg-white/10")
                   )}
                 >
                   More
@@ -148,7 +146,10 @@ export function Header() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-foreground rounded-full hover:bg-secondary/50 transition-colors"
+              className={cn(
+                "lg:hidden p-2 rounded-full transition-colors",
+                isScrolled ? "text-foreground hover:bg-secondary/50" : "text-white hover:bg-white/10"
+              )}
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
