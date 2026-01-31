@@ -102,7 +102,7 @@ export function Hero() {
           <Link href="/results">
             <Button
               size="lg"
-              className="bg-black text-white hover:bg-black/90 px-6 sm:px-8 md:px-10 lg:px-12 py-3 sm:py-4 md:py-5 text-sm sm:text-base md:text-lg font-bold rounded-full transition-all duration-300 shadow-2xl hover:shadow-black/30 hover:scale-105 border-2 border-black/20"
+              className="bg-white text-black hover:bg-gray-100 px-6 sm:px-8 md:px-10 lg:px-12 py-3 sm:py-4 md:py-5 text-sm sm:text-base md:text-lg font-bold rounded-full transition-all duration-300 shadow-2xl hover:shadow-white/20 hover:scale-105 border-2 border-white/50"
             >
               View Results
             </Button>
