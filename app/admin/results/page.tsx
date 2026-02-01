@@ -81,6 +81,19 @@ export default function AdminResultsPage() {
     const [isAutoGenerating, setIsAutoGenerating] = useState(false)
     const [customResultNumber, setCustomResultNumber] = useState<string>("01")
     const [eventSearchQuery, setEventSearchQuery] = useState("")
+    const [posterMode, setPosterMode] = useState<'auto' | 'manual'>('auto')
+
+    const handleManualFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) {
+            setPosterFiles([file])
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                setPosterPreviews([reader.result as string])
+            }
+            reader.readAsDataURL(file)
+        }
+    }
 
     // Update result number when dialog opens or results change
     useEffect(() => {
@@ -380,6 +393,7 @@ export default function AdminResultsPage() {
         setPosterPreviews([])
         setIsDialogOpen(false)
         setIsAutoGenerating(false)
+        setPosterMode('auto')
     }
 
     const getRankBadge = (rank: number) => {
@@ -568,20 +582,54 @@ export default function AdminResultsPage() {
                                             <ImageIcon size={10} />
                                             Event Poster
                                         </span>
-                                        <a
-                                            href={result.poster}
-                                            download
-                                            className="text-[10px] font-bold uppercase text-blue-500 hover:text-blue-600 flex items-center gap-1"
+                                        <button
+                                            onClick={async () => {
+                                                try {
+                                                    const response = await fetch(result.poster!);
+                                                    const blob = await response.blob();
+                                                    const url = window.URL.createObjectURL(blob);
+                                                    const link = document.createElement('a');
+                                                    link.href = url;
+                                                    link.download = `Optimus-Poster-${result.event.replace(/\s+/g, '-')}.png`;
+                                                    document.body.appendChild(link);
+                                                    link.click();
+                                                    document.body.removeChild(link);
+                                                    window.URL.revokeObjectURL(url);
+                                                } catch (error) {
+                                                    console.error("Download failed:", error);
+                                                    window.open(result.poster!, '_blank');
+                                                }
+                                            }}
+                                            className="text-[10px] font-bold uppercase text-blue-500 hover:text-blue-600 flex items-center gap-1 bg-transparent border-none cursor-pointer"
                                         >
                                             <Download size={10} />
                                             Download
-                                        </a>
+                                        </button>
                                     </div>
-                                    <div className="relative w-full h-40 rounded-xl overflow-hidden bg-gray-100 border border-border group/poster">
+                                    <div
+                                        className="relative w-full h-40 rounded-xl overflow-hidden bg-gray-100 border border-border group/poster cursor-pointer"
+                                        onClick={async () => {
+                                            try {
+                                                const response = await fetch(result.poster!);
+                                                const blob = await response.blob();
+                                                const url = window.URL.createObjectURL(blob);
+                                                const link = document.createElement('a');
+                                                link.href = url;
+                                                link.download = `Optimus-Poster-${result.event.replace(/\s+/g, '-')}.png`;
+                                                document.body.appendChild(link);
+                                                link.click();
+                                                document.body.removeChild(link);
+                                                window.URL.revokeObjectURL(url);
+                                            } catch (error) {
+                                                console.error("Download failed:", error);
+                                                window.open(result.poster!, '_blank');
+                                            }
+                                        }}
+                                    >
                                         <Image src={result.poster} alt="Event Poster" fill className="object-cover group-hover/poster:scale-105 transition-transform duration-500" />
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/poster:opacity-100 transition-opacity flex items-center justify-center">
-                                            <Button variant="secondary" size="sm" onClick={() => window.open(result.poster, '_blank')}>
-                                                View Full Size
+                                            <Button variant="secondary" size="sm" className="pointer-events-none">
+                                                <Download className="mr-2" size={14} /> Download Poster
                                             </Button>
                                         </div>
                                     </div>
@@ -826,42 +874,98 @@ export default function AdminResultsPage() {
                                             </Button>
                                         </div>
 
-                                        {/* Poster Preview */}
+                                        {/* Poster Section with Tabs */}
                                         <div className="space-y-4">
-                                            <div className="flex items-center justify-between">
-                                                <Label className="font-bold uppercase tracking-widest text-[10px] text-gray-500">Live Poster Preview</Label>
-                                                <Button
+                                            <div className="flex items-center justify-between bg-gray-100 p-1 rounded-xl">
+                                                <button
                                                     type="button"
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={handleAutoGeneratePoster}
-                                                    disabled={isAutoGenerating || !selectedEvent}
-                                                    className="h-8 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-100"
-                                                >
-                                                    {isAutoGenerating ? (
-                                                        <Loader2 className="mr-1 animate-spin" size={12} />
-                                                    ) : (
-                                                        <Sparkles className="mr-1" size={12} />
+                                                    onClick={() => setPosterMode('auto')}
+                                                    className={cn(
+                                                        "flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all",
+                                                        posterMode === 'auto' ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
                                                     )}
-                                                    Update Preview
-                                                </Button>
+                                                >
+                                                    Auto Generate
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setPosterMode('manual')}
+                                                    className={cn(
+                                                        "flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all",
+                                                        posterMode === 'manual' ? "bg-white text-purple-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                                                    )}
+                                                >
+                                                    Manual Upload
+                                                </button>
                                             </div>
 
-                                            {posterPreviews.length > 0 ? (
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    {posterPreviews.map((preview, idx) => (
-                                                        <div key={idx} className="relative w-full aspect-[4/5] rounded-xl overflow-hidden shadow-md border border-gray-100">
-                                                            <Image src={preview} alt={`Preview ${idx + 1}`} fill className="object-cover" />
-                                                            <div className="absolute top-1 left-1 bg-black/50 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold">
-                                                                {idx === 0 ? "V1" : idx === 1 ? "V2" : "V3"}
-                                                            </div>
+                                            {posterMode === 'auto' ? (
+                                                <>
+                                                    <div className="flex items-center justify-between">
+                                                        <Label className="font-bold uppercase tracking-widest text-[10px] text-gray-500">Live Preview</Label>
+                                                        <Button
+                                                            type="button"
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={handleAutoGeneratePoster}
+                                                            disabled={isAutoGenerating || !selectedEvent}
+                                                            className="h-8 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-100"
+                                                        >
+                                                            {isAutoGenerating ? (
+                                                                <Loader2 className="mr-1 animate-spin" size={12} />
+                                                            ) : (
+                                                                <Sparkles className="mr-1" size={12} />
+                                                            )}
+                                                            Update Preview
+                                                        </Button>
+                                                    </div>
+
+                                                    {posterPreviews.length > 0 ? (
+                                                        <div className="grid grid-cols-2 gap-2">
+                                                            {posterPreviews.map((preview, idx) => (
+                                                                <div key={idx} className="relative w-full aspect-[4/5] rounded-xl overflow-hidden shadow-md border border-gray-100">
+                                                                    <Image src={preview} alt={`Preview ${idx + 1}`} fill className="object-cover" />
+                                                                    <div className="absolute top-1 left-1 bg-black/50 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold">
+                                                                        {idx === 0 ? "V1" : idx === 1 ? "V2" : "V3"}
+                                                                    </div>
+                                                                </div>
+                                                            ))}
                                                         </div>
-                                                    ))}
-                                                </div>
+                                                    ) : (
+                                                        <div className="border-2 border-dashed border-gray-200 rounded-2xl p-12 text-center text-gray-400 bg-gray-50">
+                                                            <Sparkles className="mx-auto mb-2 opacity-50" size={40} />
+                                                            <p className="text-sm">3 Posters will be auto-generated</p>
+                                                        </div>
+                                                    )}
+                                                </>
                                             ) : (
-                                                <div className="border-2 border-dashed border-gray-200 rounded-2xl p-12 text-center text-gray-400 bg-gray-50">
-                                                    <ImageIcon className="mx-auto mb-2 opacity-50" size={40} />
-                                                    <p className="text-sm">3 Posters will be auto-generated during preview or publish</p>
+                                                <div className="border-2 border-dashed border-purple-200 bg-purple-50/30 rounded-2xl p-8 hover:bg-purple-50/50 transition-colors block cursor-pointer group relative">
+                                                    <Input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                                        onChange={handleManualFileChange}
+                                                    />
+                                                    <div className="text-center">
+                                                        {posterPreviews.length > 0 ? (
+                                                            <div className="w-full aspect-[4/5] relative rounded-xl overflow-hidden shadow-md mx-auto max-w-[200px]">
+                                                                <Image src={posterPreviews[0]} alt="Manual Upload Preview" fill className="object-cover" />
+                                                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                    <p className="text-white font-bold text-xs flex items-center gap-1">
+                                                                        <Upload size={14} /> Change Image
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <>
+                                                                <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                                                                    <Upload size={24} />
+                                                                </div>
+                                                                <p className="font-bold text-purple-900 mb-1">Click to Upload Poster</p>
+                                                                <p className="text-xs text-purple-600/70">Supports JPG, PNG (Max 5MB)</p>
+                                                            </>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>

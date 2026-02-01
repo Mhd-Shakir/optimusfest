@@ -314,19 +314,55 @@ export function GeminiResultsInterface() {
                                                             </div>
 
                                                             {/* Posters Grid */}
+                                                            {/* Posters Grid */}
                                                             {result.posters && result.posters.length > 0 ? (
                                                                 <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
                                                                     {result.posters.map((posterUrl, pIdx) => (
-                                                                        <div key={pIdx} className="relative aspect-[4/5] rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 group">
+                                                                        <div
+                                                                            key={pIdx}
+                                                                            className="relative aspect-[4/5] rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 group cursor-pointer"
+                                                                            onClick={async (e) => {
+                                                                                e.stopPropagation();
+                                                                                try {
+                                                                                    const response = await fetch(posterUrl);
+                                                                                    const blob = await response.blob();
+                                                                                    const url = window.URL.createObjectURL(blob);
+                                                                                    const link = document.createElement('a');
+                                                                                    link.href = url;
+                                                                                    link.download = `Optimus-Poster-${result.event.replace(/\s+/g, '-')}-${pIdx + 1}.png`;
+                                                                                    document.body.appendChild(link);
+                                                                                    link.click();
+                                                                                    document.body.removeChild(link);
+                                                                                    window.URL.revokeObjectURL(url);
+                                                                                } catch (error) {
+                                                                                    console.error("Download failed:", error);
+                                                                                    window.open(posterUrl, '_blank');
+                                                                                }
+                                                                            }}
+                                                                        >
                                                                             <img src={posterUrl} alt={`Poster ${pIdx + 1}`} className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" />
                                                                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                                                                             <Button
                                                                                 variant="secondary"
                                                                                 size="icon"
                                                                                 className="absolute bottom-2 right-2 h-8 w-8 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0"
-                                                                                onClick={(e) => {
+                                                                                onClick={async (e) => {
                                                                                     e.stopPropagation();
-                                                                                    window.open(posterUrl, '_blank');
+                                                                                    try {
+                                                                                        const response = await fetch(posterUrl);
+                                                                                        const blob = await response.blob();
+                                                                                        const url = window.URL.createObjectURL(blob);
+                                                                                        const link = document.createElement('a');
+                                                                                        link.href = url;
+                                                                                        link.download = `Optimus-Poster-${result.event.replace(/\s+/g, '-')}-${pIdx + 1}.png`;
+                                                                                        document.body.appendChild(link);
+                                                                                        link.click();
+                                                                                        document.body.removeChild(link);
+                                                                                        window.URL.revokeObjectURL(url);
+                                                                                    } catch (error) {
+                                                                                        console.error("Download failed:", error);
+                                                                                        window.open(posterUrl, '_blank');
+                                                                                    }
                                                                                 }}
                                                                             >
                                                                                 <Download size={14} />
@@ -336,15 +372,49 @@ export function GeminiResultsInterface() {
                                                                 </div>
                                                             ) : result.poster ? (
                                                                 <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-                                                                    <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 group">
+                                                                    <div
+                                                                        className="relative aspect-video rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 group cursor-pointer"
+                                                                        onClick={async (e) => {
+                                                                            e.stopPropagation();
+                                                                            try {
+                                                                                const response = await fetch(result.poster!);
+                                                                                const blob = await response.blob();
+                                                                                const url = window.URL.createObjectURL(blob);
+                                                                                const link = document.createElement('a');
+                                                                                link.href = url;
+                                                                                link.download = `Optimus-Poster-${result.event.replace(/\s+/g, '-')}.png`;
+                                                                                document.body.appendChild(link);
+                                                                                link.click();
+                                                                                document.body.removeChild(link);
+                                                                                window.URL.revokeObjectURL(url);
+                                                                            } catch (error) {
+                                                                                console.error("Download failed:", error);
+                                                                                window.open(result.poster!, '_blank');
+                                                                            }
+                                                                        }}
+                                                                    >
                                                                         <img src={result.poster} alt="Event Poster" className="object-cover w-full h-full" />
                                                                         <Button
                                                                             variant="secondary"
                                                                             size="icon"
                                                                             className="absolute bottom-3 right-3 h-10 w-10 rounded-full shadow-xl"
-                                                                            onClick={(e) => {
+                                                                            onClick={async (e) => {
                                                                                 e.stopPropagation();
-                                                                                window.open(result.poster, '_blank');
+                                                                                try {
+                                                                                    const response = await fetch(result.poster!);
+                                                                                    const blob = await response.blob();
+                                                                                    const url = window.URL.createObjectURL(blob);
+                                                                                    const link = document.createElement('a');
+                                                                                    link.href = url;
+                                                                                    link.download = `Optimus-Poster-${result.event.replace(/\s+/g, '-')}.png`;
+                                                                                    document.body.appendChild(link);
+                                                                                    link.click();
+                                                                                    document.body.removeChild(link);
+                                                                                    window.URL.revokeObjectURL(url);
+                                                                                } catch (error) {
+                                                                                    console.error("Download failed:", error);
+                                                                                    window.open(result.poster!, '_blank');
+                                                                                }
                                                                             }}
                                                                         >
                                                                             <Download size={18} />

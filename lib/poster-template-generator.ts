@@ -54,14 +54,15 @@ export async function generateEventPoster(
             // 1. RESULT NUMBER (Inside the tab)
             // Tab center X is ~173, Y is ~220
             ctx.fillStyle = '#ffffff'
-            ctx.font = `bold ${Math.round(200 * scaleX)}px Arial, sans-serif`
+            // Use Category Font (Montserrat Thin) for Result Number
+            ctx.font = `100 ${Math.round(200 * scaleX)}px "MONTSERRAT-THIN", "Montserrat Thin", "Montserrat-Thin", "Montserrat", sans-serif`
             ctx.textAlign = 'center'
             ctx.textBaseline = 'middle'
             ctx.fillText(data.resultNumber, 173 * scaleX, 220 * scaleY)
 
             // 2. EVENT NAME
             ctx.fillStyle = '#ffffff'
-            ctx.font = `bold ${Math.round(55 * scaleX)}px Arial, sans-serif`
+            ctx.font = `${Math.round(55 * scaleX)}px "Nohemi", Arial, sans-serif`
             ctx.textAlign = 'left'
             ctx.textBaseline = 'top'
 
@@ -78,7 +79,16 @@ export async function generateEventPoster(
 
             // 3. CATEGORY (Huge and thin)
             ctx.fillStyle = '#ffffff'
-            ctx.font = `lighter ${Math.round(140 * scaleX)}px 'Dancing Script', cursive` // Script font
+            // Try explicit Thin family first, then fallback to standard Montserrat with 100 weight
+            ctx.font = `${Math.round(140 * scaleX)}px "MONTSERRAT-THIN", "Montserrat Thin", "Montserrat-Thin", sans-serif`
+            // If the above doesn't work well, we might need a separate draw call, but let's try strict family names first. 
+            // Often "Montserrat Thin" is a distinct family on Windows.
+            if (document.fonts.check(`100 10px "Montserrat"`)) {
+                ctx.font = `100 ${Math.round(140 * scaleX)}px "Montserrat", sans-serif`
+            }
+            // Final Override with user request + fallbacks
+            ctx.font = `100 ${Math.round(140 * scaleX)}px "MONTSERRAT-THIN", "Montserrat Thin", "Montserrat-Thin", "Montserrat", sans-serif`
+
             ctx.textAlign = 'left'
             ctx.fillText(data.category, titleX, currentY)
 
@@ -189,14 +199,15 @@ export async function generatePosterVariations(
 
                 // 1. RESULT NUMBER
                 ctx.fillStyle = '#ffffff'
-                ctx.font = `bold ${Math.round(200 * scaleX)}px Arial, sans-serif`
+                // Use Category Font (Montserrat Thin) for Result Number
+                ctx.font = `100 ${Math.round(200 * scaleX)}px "MONTSERRAT-THIN", "Montserrat Thin", "Montserrat-Thin", "Montserrat", sans-serif`
                 ctx.textAlign = 'center'
                 ctx.textBaseline = 'middle'
                 ctx.fillText(data.resultNumber, 173 * scaleX, 220 * scaleY)
 
                 // 2. EVENT NAME
                 ctx.fillStyle = '#ffffff'
-                ctx.font = `bold ${Math.round(55 * scaleX)}px Arial, sans-serif`
+                ctx.font = `${Math.round(55 * scaleX)}px "Nohemi", Arial, sans-serif`
                 ctx.textAlign = 'left'
                 ctx.textBaseline = 'top'
 
@@ -213,7 +224,7 @@ export async function generatePosterVariations(
 
                 // 3. CATEGORY
                 ctx.fillStyle = '#333333'
-                ctx.font = `lighter ${Math.round(140 * scaleX)}px 'Dancing Script', cursive`
+                ctx.font = `100 ${Math.round(140 * scaleX)}px "MONTSERRAT-THIN", "Montserrat Thin", "Montserrat-Thin", "Montserrat", sans-serif`
                 ctx.textAlign = 'left'
                 ctx.fillText(data.category, titleX, 345 * scaleY)
 

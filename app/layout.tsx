@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
-import { Poppins, Playfair_Display, Geist_Mono, Dancing_Script } from "next/font/google"
+import { Poppins, Playfair_Display, Geist_Mono, Dancing_Script, Montserrat } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { siteConfig, organizationSchema, websiteSchema, eventSchema } from "@/lib/seo-config"
@@ -12,6 +12,11 @@ const poppins = Poppins({
 })
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" })
 const dancingScript = Dancing_Script({ subsets: ["latin"], variable: "--font-dancing-script" })
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"] // Include Thin (100)
+})
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" })
 
 export const metadata: Metadata = {
@@ -112,7 +117,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${poppins.variable} ${playfair.variable} ${dancingScript.variable} ${geistMono.variable} font-sans antialiased`}>
+      <body className={`${poppins.variable} ${playfair.variable} ${dancingScript.variable} ${montserrat.variable} ${geistMono.variable} font-sans antialiased`}>
         {children}
         <Analytics />
       </body>

@@ -20,7 +20,7 @@ export default function ResultsPage() {
   ]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-blue-50 via-purple-50 to-pink-50 dark:from-gray-950 dark:via-purple-950/20 dark:to-pink-950/20">
+    <main className="min-h-screen bg-white text-gray-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -32,7 +32,7 @@ export default function ResultsPage() {
         <div className="container mx-auto px-4">
           {/* Page Header */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
+            <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-purple-100 text-black">
               <Sparkles size={18} />
               <span className="text-sm font-medium">Interactive Results Bot</span>
             </div>
