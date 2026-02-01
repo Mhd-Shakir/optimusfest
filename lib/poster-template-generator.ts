@@ -133,8 +133,7 @@ export async function generateEventPoster(
                     // Draw Main Name
                     ctx.fillStyle = '#1a1a1a'
                     ctx.font = `bold ${Math.round(24 * scaleX)}px "Montserrat", sans-serif`
-                    // Force split by space into new lines
-                    const nameLines = mainName.split(' ')
+                    const nameLines = wrapText(ctx, mainName, 300 * scaleX)
                     nameLines.forEach(line => {
                         ctx.fillText(line, x, y)
                         y += 42 * scaleY
@@ -270,8 +269,7 @@ export async function generatePosterVariations(
                         // Draw Main Name
                         ctx.fillStyle = '#1a1a1a'
                         ctx.font = `bold ${Math.round(24 * scaleX)}px "Montserrat", sans-serif`
-                        // Force split by space into new lines
-                        const nameLines = mainName.split(' ')
+                        const nameLines = wrapText(ctx, mainName, 300 * scaleX)
                         nameLines.forEach(line => {
                             ctx.fillText(line, x, y)
                             y += 42 * scaleY

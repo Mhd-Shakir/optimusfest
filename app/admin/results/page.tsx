@@ -84,14 +84,21 @@ export default function AdminResultsPage() {
     const [posterMode, setPosterMode] = useState<'auto' | 'manual'>('auto')
 
     const handleManualFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (file) {
-            setPosterFiles([file])
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setPosterPreviews([reader.result as string])
-            }
-            reader.readAsDataURL(file)
+        if (e.target.files) {
+            const files = Array.from(e.target.files).slice(0, 4)
+            setPosterFiles(files)
+
+            const promises = files.map(file => {
+                return new Promise<string>((resolve) => {
+                    const reader = new FileReader()
+                    reader.onloadend = () => resolve(reader.result as string)
+                    reader.readAsDataURL(file)
+                })
+            })
+
+            Promise.all(promises).then(previews => {
+                setPosterPreviews(previews)
+            })
         }
     }
 
@@ -943,26 +950,35 @@ export default function AdminResultsPage() {
                                                     <Input
                                                         type="file"
                                                         accept="image/*"
+                                                        multiple
                                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                                         onChange={handleManualFileChange}
                                                     />
                                                     <div className="text-center">
                                                         {posterPreviews.length > 0 ? (
-                                                            <div className="w-full aspect-[4/5] relative rounded-xl overflow-hidden shadow-md mx-auto max-w-[200px]">
-                                                                <Image src={posterPreviews[0]} alt="Manual Upload Preview" fill className="object-cover" />
-                                                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                                    <p className="text-white font-bold text-xs flex items-center gap-1">
-                                                                        <Upload size={14} /> Change Image
-                                                                    </p>
-                                                                </div>
+                                                            <div className="grid grid-cols-2 gap-4">
+                                                                {posterPreviews.map((preview, idx) => (
+                                                                    <div key={idx} className="relative w-full aspect-[4/5] rounded-xl overflow-hidden shadow-md bg-white">
+                                                                        <Image src={preview} alt={`Manual Preview ${idx + 1}`} fill className="object-cover" />
+                                                                        <div className="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full font-bold z-20">
+                                                                            {idx + 1}
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                                {posterPreviews.length < 4 && (
+                                                                    <div className="flex flex-col items-center justify-center aspect-[4/5] bg-purple-100/50 rounded-xl border-2 border-dashed border-purple-300">
+                                                                        <Plus className="w-8 h-8 text-purple-400 mb-1" />
+                                                                        <span className="text-xs text-purple-600 font-medium">Add More</span>
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         ) : (
                                                             <>
                                                                 <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
                                                                     <Upload size={24} />
                                                                 </div>
-                                                                <p className="font-bold text-purple-900 mb-1">Click to Upload Poster</p>
-                                                                <p className="text-xs text-purple-600/70">Supports JPG, PNG (Max 5MB)</p>
+                                                                <p className="font-bold text-purple-900 mb-1">Click to Upload Posters</p>
+                                                                <p className="text-xs text-purple-600/70">Upload up to 4 images (JPG, PNG)</p>
                                                             </>
                                                         )}
                                                     </div>
