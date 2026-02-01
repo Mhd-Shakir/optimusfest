@@ -132,8 +132,9 @@ export async function generateEventPoster(
 
                     // Draw Main Name
                     ctx.fillStyle = '#1a1a1a'
-                    ctx.font = `bold ${Math.round(36 * scaleX)}px Arial, sans-serif`
-                    const nameLines = wrapText(ctx, mainName, 300 * scaleX)
+                    ctx.font = `bold ${Math.round(24 * scaleX)}px "Montserrat", sans-serif`
+                    // Force split by space into new lines
+                    const nameLines = mainName.split(' ')
                     nameLines.forEach(line => {
                         ctx.fillText(line, x, y)
                         y += 42 * scaleY
@@ -142,7 +143,7 @@ export async function generateEventPoster(
                     // Draw Subtext (if any)
                     if (subText) {
                         ctx.fillStyle = '#555555'
-                        ctx.font = `${Math.round(30 * scaleX)}px Arial, sans-serif`
+                        ctx.font = `${Math.round(20 * scaleX)}px "Montserrat", sans-serif`
                         const subLines = wrapText(ctx, subText, 300 * scaleX)
                         subLines.forEach(line => {
                             ctx.fillText(line, x, y)
@@ -223,7 +224,7 @@ export async function generatePosterVariations(
                 })
 
                 // 3. CATEGORY
-                ctx.fillStyle = '#333333'
+                ctx.fillStyle = '#ffffff'
                 ctx.font = `100 ${Math.round(140 * scaleX)}px "MONTSERRAT-THIN", "Montserrat Thin", "Montserrat-Thin", "Montserrat", sans-serif`
                 ctx.textAlign = 'left'
                 ctx.fillText(data.category, titleX, 345 * scaleY)
@@ -268,8 +269,9 @@ export async function generatePosterVariations(
 
                         // Draw Main Name
                         ctx.fillStyle = '#1a1a1a'
-                        ctx.font = `bold ${Math.round(36 * scaleX)}px Arial, sans-serif`
-                        const nameLines = wrapText(ctx, mainName, 300 * scaleX)
+                        ctx.font = `bold ${Math.round(24 * scaleX)}px "Montserrat", sans-serif`
+                        // Force split by space into new lines
+                        const nameLines = mainName.split(' ')
                         nameLines.forEach(line => {
                             ctx.fillText(line, x, y)
                             y += 42 * scaleY
@@ -278,7 +280,7 @@ export async function generatePosterVariations(
                         // Draw Subtext
                         if (subText) {
                             ctx.fillStyle = '#555555'
-                            ctx.font = `${Math.round(30 * scaleX)}px Arial, sans-serif`
+                            ctx.font = `${Math.round(20 * scaleX)}px "Montserrat", sans-serif`
                             const subLines = wrapText(ctx, subText, 300 * scaleX)
                             subLines.forEach(line => {
                                 ctx.fillText(line, x, y)
