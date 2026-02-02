@@ -11,7 +11,7 @@ export async function GET(request: Request) {
         let results
 
         if (search) {
-            results = await searchResults(search)
+            results = await searchResults(search, category || undefined)
         } else if (category) {
             results = await getResultsByCategory(category)
         } else if (event) {

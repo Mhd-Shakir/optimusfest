@@ -76,10 +76,15 @@ export async function deleteResult(id: string): Promise<void> {
     }
 }
 
+function escapeRegExp(string: string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
 export async function getResultsByCategory(category: string): Promise<ResultData[]> {
     try {
         await dbConnect()
-        const results = await Result.find({ category: { $regex: new RegExp(`^${category}$`, "i") } }).sort({ createdAt: -1 })
+        const escapedCategory = escapeRegExp(category)
+        const results = await Result.find({ category: { $regex: new RegExp(`^${escapedCategory}$`, "i") } }).sort({ createdAt: -1 })
         return results.map(mapDocumentToResult)
     } catch (error) {
         console.error("Error fetching results by category from DB:", error)
@@ -90,7 +95,8 @@ export async function getResultsByCategory(category: string): Promise<ResultData
 export async function getResultsByEvent(event: string): Promise<ResultData[]> {
     try {
         await dbConnect()
-        const results = await Result.find({ event: { $regex: new RegExp(`^${event}$`, "i") } }).sort({ createdAt: -1 })
+        const escapedEvent = escapeRegExp(event)
+        const results = await Result.find({ event: { $regex: new RegExp(`^${escapedEvent}$`, "i") } }).sort({ createdAt: -1 })
         return results.map(mapDocumentToResult)
     } catch (error) {
         console.error("Error fetching results by event from DB:", error)
@@ -98,17 +104,26 @@ export async function getResultsByEvent(event: string): Promise<ResultData[]> {
     }
 }
 
-export async function searchResults(query: string): Promise<ResultData[]> {
+export async function searchResults(query: string, categoryFilter?: string): Promise<ResultData[]> {
     try {
         await dbConnect()
-        const regex = new RegExp(query, "i")
-        const results = await Result.find({
+        const escapedQuery = escapeRegExp(query)
+        const regex = new RegExp(escapedQuery, "i")
+
+        const filter: any = {
             $or: [
                 { event: regex },
                 { category: regex },
                 { "winners.studentName": regex }
             ],
-        }).sort({ createdAt: -1 })
+        }
+
+        if (categoryFilter) {
+            const escapedCategory = escapeRegExp(categoryFilter)
+            filter.category = { $regex: new RegExp(`^${escapedCategory}$`, "i") }
+        }
+
+        const results = await Result.find(filter).sort({ createdAt: -1 })
         return results.map(mapDocumentToResult)
     } catch (error) {
         console.error("Error searching results in DB:", error)
